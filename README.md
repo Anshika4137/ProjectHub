@@ -7,7 +7,7 @@
 ![MongoDB](https://img.shields.io/badge/MongoDB-Database-47A248?style=for-the-badge&logo=mongodb)
 ![Socket.io](https://img.shields.io/badge/Socket.io-RealTime-black?style=for-the-badge&logo=socket.io)
 
-> A full-stack collaborative Project Management Tool built with MERN Stack — similar to Trello/Asana. Built as part of **CodeAlpha Full Stack Development Internship**.
+> A full-stack collaborative Project Management Tool built with MERN Stack — similar to Trello/Asana.
 
 ---
 
@@ -181,17 +181,9 @@ http://localhost:5173
 
 ## 👨‍💻 Developer
 
-**Your Name**
-- GitHub: https://github.com/raghuram-007
-- LinkedIn: https://www.linkedin.com/in/raghuram-webdev/
-
----
-
-## 🏢 Internship
-
-This project was built as **Task 3** of the **CodeAlpha Full Stack Development Internship**.
-
-[![CodeAlpha](https://img.shields.io/badge/Internship-CodeAlpha-blue?style=for-the-badge)](https://www.codealpha.tech)
+**Anshika Bhatt**
+- GitHub: https://github.com/Anshika4137
+- LinkedIn: https://www.linkedin.com/in/anshikabhatt1/
 
 ---
 
