@@ -1,6 +1,5 @@
-import { createContext, useState, useContext } from 'react';
-
-const AuthContext = createContext();
+import { useState } from 'react';
+import { AppAuthContext } from './appAuthContext.js';
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(JSON.parse(localStorage.getItem('user')) || null);
@@ -21,10 +20,8 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, token, login, logout }}>
+    <AppAuthContext.Provider value={{ user, token, login, logout }}>
       {children}
-    </AuthContext.Provider>
+    </AppAuthContext.Provider>
   );
 };
-
-export const useAuth = () => useContext(AuthContext);

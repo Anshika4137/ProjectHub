@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useParams, useNavigate } from 'react-router-dom';
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
-import { useAuth } from '../context/AuthContext';
+import { useAuth } from '../context/useAuth.js';
 import Navbar from '../components/Navbar';
 import CommentSection from '../components/CommentSection';
 import { io } from 'socket.io-client';
@@ -63,6 +63,7 @@ export default function Board() {
     } catch (err) { console.log(err); }
   };
 
+  // Socket listeners are scoped to the active project; task/project mutations refresh their data explicitly.
   useEffect(() => {
     fetchTasks();
     fetchProject();
@@ -70,6 +71,8 @@ export default function Board() {
     socket.on('refreshTasks', () => fetchTasks());
     socket.on('notification', (data) => addNotification(data.message));
     return () => { socket.off('refreshTasks'); socket.off('notification'); };
+  // The listeners must be recreated only when the active board changes.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [projectId]);
 
   const handleCreateTask = async (e) => {
@@ -157,7 +160,7 @@ export default function Board() {
       setSelectedTask(prev => ({ ...prev, assignedTo: project.members.find(m => m._id === newAssigneeId) || null }));
       socket.emit('taskUpdated', { projectId });
       setTimeout(() => setReassignMsg(''), 3000);
-    } catch (err) {
+    } catch {
       setReassignMsg('❌ Failed to reassign');
     } finally {
       setReassigning(false);

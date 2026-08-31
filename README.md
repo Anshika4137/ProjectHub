@@ -1,197 +1,103 @@
+# ProjectHub
 
-# 🗂️ ProjectHub - Project Management Tool
+ProjectHub is a full-stack project-management application for small teams. Users can register, create and manage projects, invite existing users by email, organize tasks on a Kanban board, assign tasks, set priority/due dates, and comment on tasks.
 
-![MERN Stack](https://img.shields.io/badge/Stack-MERN-blue?style=for-the-badge)
-![React](https://img.shields.io/badge/React-19-61DAFB?style=for-the-badge&logo=react)
-![Node.js](https://img.shields.io/badge/Node.js-Express-339933?style=for-the-badge&logo=node.js)
-![MongoDB](https://img.shields.io/badge/MongoDB-Database-47A248?style=for-the-badge&logo=mongodb)
-![Socket.io](https://img.shields.io/badge/Socket.io-RealTime-black?style=for-the-badge&logo=socket.io)
+The repository is a learning/portfolio implementation and is **not deployment-ready as-is**. Its verified limitations and improvement path are documented in [the readiness guide](docs/PROJECT_WORKFLOW_AND_READINESS.md).
 
-> A full-stack collaborative Project Management Tool built with MERN Stack — similar to Trello/Asana.
+## What is implemented
 
----
+- JWT-based registration and login, with the token currently stored in browser local storage.
+- Project create, list, edit, delete, add-member, and remove-member flows.
+- Task create, edit, delete, reassignment, priority, due date, and Todo/In Progress/Done status.
+- Drag-and-drop Kanban status changes.
+- Create, edit, and delete task comments.
+- Socket.io room events and session-only browser notifications.
 
-## 🌟 Features
-
-- 🔐 **User Authentication** — Register & Login with JWT
-- 🗂️ **Project Boards** — Create and manage group projects
-- 👥 **Team Collaboration** — Add members to projects via email
-- ✅ **Kanban Board** — Drag & drop tasks (Todo / In Progress / Done)
-- 📌 **Task Assignment** — Assign tasks to team members
-- 💬 **Comments** — Comment on tasks with username display
-- 🔔 **Real-time Notifications** — Socket.io powered live updates
-- 👑 **Role System** — Owner & Member roles
-- 📱 **Responsive UI** — Built with Tailwind CSS
-
----
-
-## 🛠️ Tech Stack
-
-### Frontend
-| Technology | Usage |
-|---|---|
-| React 19 + Vite | Frontend Framework |
-| Tailwind CSS | Styling |
-| React Router DOM | Navigation |
-| Axios | API Calls |
-| @hello-pangea/dnd | Drag & Drop |
-| Socket.io Client | Real-time |
-
-### Backend
-| Technology | Usage |
-|---|---|
-| Node.js | Runtime |
-| Express.js | Server Framework |
-| MongoDB + Mongoose | Database |
-| JWT | Authentication |
-| bcryptjs | Password Hashing |
-| Socket.io | WebSockets |
-
----
-
-## 📁 Project Structure
+## Architecture
 
 ```
-CodeAlpha_ProjectManagement/
-├── client/                  # React Frontend
-│   ├── src/
-│   │   ├── components/
-│   │   │   ├── Navbar.jsx
-│   │   │   ├── Footer.jsx
-│   │   │   └── CommentSection.jsx
-│   │   ├── pages/
-│   │   │   ├── Login.jsx
-│   │   │   ├── Register.jsx
-│   │   │   ├── Dashboard.jsx
-│   │   │   └── Board.jsx
-│   │   ├── context/
-│   │   │   └── AuthContext.jsx
-│   │   └── App.jsx
-├── server/                  # Node.js Backend
-│   ├── models/
-│   │   ├── User.js
-│   │   ├── Project.js
-│   │   └── Task.js
-│   ├── routes/
-│   │   ├── auth.js
-│   │   ├── projects.js
-│   │   └── tasks.js
-│   ├── middleware/
-│   │   └── auth.js
-│   └── server.js
-└── README.md
+React + Vite client (port 5173)
+  ├─ Axios REST requests ──────────► Express API (port 5000) ─► MongoDB
+  └─ Socket.io client ─────────────► Socket.io server
 ```
 
----
+| Directory | Responsibility | Entry point |
+| --- | --- | --- |
+| `client/` | React 19 single-page app styled with Tailwind | `src/main.jsx` |
+| `server/` | Express 5 API, Socket.io server, Mongoose models | `server.js` |
 
-## ⚙️ Installation & Setup
+See [docs/PROJECT_AUDIT.md](docs/PROJECT_AUDIT.md) for the full source/dependency inventory, endpoint map, data model, verification results, and future decision record. See [docs/PROJECT_WORKFLOW_AND_READINESS.md](docs/PROJECT_WORKFLOW_AND_READINESS.md) for a plain-English explanation of how the product works.
 
-### Prerequisites
-- Node.js installed
-- MongoDB Atlas account
-- Git installed
+## Technology
 
-### 1. Clone the repository
-```bash
-git clone https://github.com/YOUR_USERNAME/CodeAlpha_ProjectManagement.git
-cd CodeAlpha_ProjectManagement
-```
+- Frontend: React 19, React Router 7, Vite 8, Tailwind CSS 4, Axios, Socket.io Client, Framer Motion, and `@hello-pangea/dnd`.
+- Backend: Node.js, Express 5, MongoDB/Mongoose, JWT, bcryptjs, Socket.io, CORS, dotenv, and Nodemon.
 
-### 2. Setup Backend
-```bash
-cd server
-npm install
-```
+## Run locally
 
-Create `.env` file in server folder:
-```env
-MONGO_URI=your_mongodb_connection_string
-JWT_SECRET=your_secret_key
-PORT=5000
-```
+Prerequisites: a current Node.js LTS release, npm, and a reachable MongoDB deployment. Node `v22.19.0` and npm `10.9.3` were present during the audit; the project currently declares no Node `engines` requirement.
 
-Run backend:
-```bash
-npm run dev
-```
+1. Create a local server configuration. Never commit real secrets:
 
-### 3. Setup Frontend
-```bash
-cd client
-npm install
-npm run dev
-```
+   ```env
+   MONGO_URI=mongodb+srv://<user>:<password>@<cluster>/<database>?retryWrites=true&w=majority
+   JWT_SECRET=use-a-long-random-value
+   PORT=5000
+   ```
 
-### 4. Open in browser
-```
-http://localhost:5173
-```
+2. Start the server in one terminal:
 
----
+   ```bash
+   cd server
+   npm install
+   npm run dev
+   ```
 
-## 🚀 Usage
+3. Start the client in a second terminal:
 
-1. **Register** a new account
-2. **Login** with your credentials
-3. **Create a project** from Dashboard
-4. **Add team members** by their email
-5. **Create tasks** and assign to members
-6. **Drag & drop** tasks between columns
-7. **Click any task** to add comments
-8. **Get real-time notifications** 🔔 when tasks are updated
+   ```bash
+   cd client
+   npm install
+   npm run dev
+   ```
 
----
+4. Open Vite's URL, normally `http://localhost:5173`, register, then create a project.
 
-## 📸 Pages
+The client currently hard-codes `http://localhost:5000` for REST and WebSockets. Replace this with environment-driven configuration before deployment.
 
-| Page | Description |
-|---|---|
-| Login | User authentication |
-| Register | Create new account |
-| Dashboard | View all projects |
-| Board | Kanban board with tasks |
+## API overview
 
----
+Except for registration/login, endpoints expect `Authorization: Bearer <token>`.
 
-## 🔗 API Endpoints
+| Area | Routes |
+| --- | --- |
+| Auth | `POST /api/auth/register`, `POST /api/auth/login`, `GET /api/auth/finduser?email=` |
+| Projects | `POST/GET /api/projects`, `PUT/DELETE /api/projects/:id`, `PUT /:id/addmember`, `PUT /:id/removemember` |
+| Tasks | `POST /api/tasks`, `GET /api/tasks/:projectId`, `PUT/DELETE /api/tasks/:id` |
+| Comments | `POST /api/tasks/:id/comment`, `PUT/DELETE /api/tasks/:id/comment/:commentId` |
 
-### Auth
-| Method | Endpoint | Description |
-|---|---|---|
-| POST | `/api/auth/register` | Register user |
-| POST | `/api/auth/login` | Login user |
-| GET | `/api/auth/finduser` | Find user by email |
+## Scripts
 
-### Projects
-| Method | Endpoint | Description |
-|---|---|---|
-| POST | `/api/projects` | Create project |
-| GET | `/api/projects` | Get all projects |
-| PUT | `/api/projects/:id/addmember` | Add member |
+| Package | Command | Purpose |
+| --- | --- | --- |
+| `server` | `npm start` | Run API server |
+| `server` | `npm run dev` | Run API with Nodemon |
+| `client` | `npm run dev` | Run Vite server |
+| `client` | `npm run lint` | Run ESLint |
+| `client` | `npm run build` | Create production bundle |
+| `client` | `npm run preview` | Preview completed build |
 
-### Tasks
-| Method | Endpoint | Description |
-|---|---|---|
-| POST | `/api/tasks` | Create task |
-| GET | `/api/tasks/:projectId` | Get tasks |
-| PUT | `/api/tasks/:id` | Update task status |
-| POST | `/api/tasks/:id/comment` | Add comment |
+## Verification snapshot — 30 August 2026
 
----
+- Offline `npm audit --omit=dev` reported 0 known vulnerabilities for both dependency trees; this is not a full online security audit.
+- `npm run lint` currently fails with four errors and two warnings.
+- `npm run build` currently fails in the audit environment when Tailwind's native Windows binary loads, followed by Vite `spawn EPERM`.
+- No automated tests or CI workflow are present.
 
-## 👨‍💻 Developer
+## Repository hygiene and security
 
-**Anshika Bhatt**
-- GitHub: https://github.com/Anshika4137
-- LinkedIn: https://www.linkedin.com/in/anshikabhatt1/
+`server/.env` is currently tracked by Git and dependency folders are tracked too. Rotate any potentially exposed MongoDB/JWT values, remove the secret and generated dependency files in a deliberate cleanup change, add a root `.gitignore`, and commit a safe `server/.env.example`. The full prioritized remediation plan is in the readiness guide.
 
----
+## License
 
-## 📄 License
-
-This project is open source and available under the [MIT License](LICENSE).
-
----
-
-⭐ **If you found this project helpful, please give it a star!** ⭐
-
+The former README declared MIT, but no tracked `LICENSE` file exists. Add the intended license before publishing.

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
-import { useAuth } from '../context/AuthContext';
+import { useAuth } from '../context/useAuth.js';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 
@@ -30,6 +30,8 @@ export default function Dashboard() {
     }
   };
 
+  // The initial request intentionally runs once; subsequent mutations refresh the list explicitly.
+  // eslint-disable-next-line react-hooks/set-state-in-effect, react-hooks/exhaustive-deps
   useEffect(() => { fetchProjects(); }, []);
 
   const handleCreate = async (e) => {
@@ -41,7 +43,7 @@ export default function Dashboard() {
       setForm({ name: '', description: '' });
       setShowModal(false);
       fetchProjects();
-    } catch (err) {
+    } catch {
       setError('Failed to create project');
     }
   };
