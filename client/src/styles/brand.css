@@ -1,0 +1,95 @@
+.projecthub-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  color: #2b2b28;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.projecthub-mark {
+  display: grid;
+  flex: 0 0 auto;
+  width: 34px;
+  height: 34px;
+  place-items: center;
+  box-sizing: border-box;
+  padding: 3px;
+  border-radius: 10px;
+  background: #f4f1e9;
+  box-shadow: 0 5px 13px rgba(74, 52, 37, .12);
+}
+
+.projecthub-mark img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  max-width: 100%;
+  object-fit: contain;
+  object-position: center;
+  border-radius: 7px;
+}
+
+.projecthub-brand-name {
+  font-size: 17px;
+  font-weight: 800;
+  letter-spacing: -.04em;
+}
+
+.projecthub-brand:focus-visible {
+  outline: 3px solid #df7869;
+  outline-offset: 4px;
+  border-radius: 7px;
+}
+
+.projecthub-brand--hero {
+  gap: 14px;
+  margin: 0 0 20px;
+}
+
+.projecthub-brand--hero .projecthub-mark {
+  width: 64px;
+  height: 64px;
+  padding: 5px;
+  border-radius: 18px;
+  box-shadow: 0 10px 22px rgba(74, 52, 37, .15);
+}
+
+.projecthub-brand--hero .projecthub-mark img {
+  border-radius: 12px;
+}
+
+.projecthub-brand--hero .projecthub-brand-name {
+  font-size: 28px;
+  font-weight: 800;
+  letter-spacing: -.055em;
+}
+
+@media (max-width: 700px) {
+  .projecthub-mark {
+    width: 29px;
+    height: 29px;
+    padding: 2px;
+    border-radius: 8px;
+  }
+
+  .projecthub-brand-name {
+    font-size: 16px;
+  }
+
+  .projecthub-brand--hero {
+    gap: 11px;
+    margin-bottom: 16px;
+  }
+
+  .projecthub-brand--hero .projecthub-mark {
+    width: 50px;
+    height: 50px;
+    padding: 4px;
+    border-radius: 14px;
+  }
+
+  .projecthub-brand--hero .projecthub-brand-name {
+    font-size: 23px;
+  }
+}

@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import ProjectHubBrand, { ProjectHubMark } from '../components/ProjectHubBrand';
 import '../styles/landing.css';
 import '../styles/landing-art.css';
 
@@ -18,7 +19,7 @@ const Check = () => (
 const ProductPreview = ({ compact = false }) => (
   <div className={`product-preview ${compact ? 'product-preview--compact' : ''}`} aria-label="Project board preview">
     <div className="preview-toolbar">
-      <div className="preview-brand"><span className="preview-mark">P</span><span>ProjectHub</span></div>
+      <div className="preview-brand"><ProjectHubMark className="preview-mark" /><span>ProjectHub</span></div>
       <div className="preview-toolbar-actions"><span className="preview-search">Search</span><span className="preview-avatar preview-avatar--violet">A</span></div>
     </div>
     <div className="preview-content">
@@ -68,7 +69,7 @@ export default function Landing() {
   return (
     <main className="landing-shell">
       <header className={`landing-nav ${scrolled ? 'landing-nav--scrolled' : ''}`}>
-        <Link to="/" className="landing-logo" aria-label="ProjectHub home"><span className="landing-logo-mark">P</span><span>ProjectHub</span></Link>
+        <ProjectHubBrand className="landing-logo" />
         <button type="button" className="landing-menu-button" aria-label="Toggle navigation" aria-expanded={menuOpen} onClick={() => setMenuOpen(!menuOpen)}><span /><span /></button>
         <nav className={`landing-links ${menuOpen ? 'landing-links--open' : ''}`} aria-label="Main navigation">
           <a href="#product" onClick={() => setMenuOpen(false)}>Product</a>
@@ -83,6 +84,7 @@ export default function Landing() {
         <div className="landing-orb landing-orb--violet" /><div className="landing-orb landing-orb--peach" /><div className="landing-grid" />
         <div className="landing-hero-copy">
           <p className="landing-eyebrow"><span /> A more focused way to work</p>
+          <ProjectHubBrand hero />
           <h1>Plan together.<br /><em>Ship with clarity.</em></h1>
           <p className="landing-lede">ProjectHub gives your team one calm, connected place to turn ambitious ideas into finished work.</p>
           <div className="landing-hero-actions"><Link to="/register" className="landing-primary-button">Get started free <Arrow /></Link><a href="#product" className="landing-secondary-button">Explore ProjectHub <span>↓</span></a></div>
@@ -128,7 +130,7 @@ export default function Landing() {
 
       <section className="landing-final-cta"><div className="landing-final-glow" /><p className="landing-section-label">READY WHEN YOU ARE</p><h2>Bring your projects<br />together.</h2><p>Start organizing the work your team is ready to ship.</p><Link to="/register" className="landing-primary-button landing-primary-button--light">Get started free <Arrow /></Link></section>
 
-      <footer className="landing-footer"><Link to="/" className="landing-logo"><span className="landing-logo-mark">P</span><span>ProjectHub</span></Link><div className="landing-footer-links"><a href="#product">Product</a><a href="#features">Features</a><Link to="/login">Login</Link><Link to="/register">Register</Link></div><p>© {new Date().getFullYear()} ProjectHub. Built for better teamwork.</p></footer>
+      <footer className="landing-footer"><ProjectHubBrand className="landing-logo" /><div className="landing-footer-links"><a href="#product">Product</a><a href="#features">Features</a><Link to="/login">Login</Link><Link to="/register">Register</Link></div><p>© {new Date().getFullYear()} ProjectHub. Built for better teamwork.</p></footer>
     </main>
   );
 }

@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useAuth } from '../context/useAuth.js';
 import { useNavigate, Link } from 'react-router-dom';
 import { io } from 'socket.io-client';
+import ProjectHubBrand from './ProjectHubBrand';
 
 const socket = io('http://localhost:5000');
 
@@ -36,26 +37,7 @@ export default function Navbar({ projectId }) {
   return (
     <nav className="app-navbar bg-white/80 backdrop-blur-md sticky top-0 z-50 px-6 py-3 flex justify-between items-center shadow-lg border-b border-gray-100">
 
-      {/* Logo */}
-      <div
-        onClick={() => navigate(user ? '/dashboard' : '/login')}
-        className="flex items-center gap-2 cursor-pointer group"
-      >
-        <div className="relative">
-          <div className="absolute inset-0 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-xl blur opacity-50 group-hover:opacity-75 transition-opacity"></div>
-          <div className="relative bg-gradient-to-br from-indigo-500 to-purple-600 p-2 rounded-xl shadow-md group-hover:shadow-lg transition-all duration-300 group-hover:scale-105">
-            <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-            </svg>
-          </div>
-        </div>
-        <div>
-          <h1 className="text-2xl font-bold bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent group-hover:from-indigo-600 group-hover:to-purple-600 transition-all duration-300">
-            ProjectHub
-          </h1>
-          <p className="text-xs text-gray-500 hidden sm:block">Collaborate & Create</p>
-        </div>
-      </div>
+      <ProjectHubBrand />
 
       {/* Right Section */}
       <div className="flex items-center gap-3">
