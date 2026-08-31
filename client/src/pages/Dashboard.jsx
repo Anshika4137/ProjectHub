@@ -98,7 +98,7 @@ export default function Dashboard() {
   const isProjectOwner = (project) => project.owner?._id === user?.id;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50">
+    <div className="app-page app-dashboard-page min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50">
       <Navbar />
       <div className="max-w-7xl mx-auto p-6 lg:p-8">
         {/* Header Section */}

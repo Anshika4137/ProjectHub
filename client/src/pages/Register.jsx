@@ -28,7 +28,7 @@ export default function Register() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-gradient-to-br from-slate-50 via-white to-indigo-50">
+    <div className="app-page app-auth-page min-h-screen flex flex-col bg-gradient-to-br from-slate-50 via-white to-indigo-50">
 
       {/* Navbar */}
       <Navbar />

@@ -183,7 +183,7 @@ export default function Board() {
   const columnIcons = { 'Todo': '📋', 'In Progress': '⚡', 'Done': '✅' };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-indigo-50">
+    <div className="app-page app-board-page min-h-screen bg-gradient-to-br from-slate-50 via-white to-indigo-50">
       <Navbar projectId={projectId} />
 
       {/* Toast Notification Stack */}

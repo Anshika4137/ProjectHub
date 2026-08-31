@@ -34,7 +34,7 @@ export default function Navbar({ projectId }) {
   };
 
   return (
-    <nav className="bg-white/80 backdrop-blur-md sticky top-0 z-50 px-6 py-3 flex justify-between items-center shadow-lg border-b border-gray-100">
+    <nav className="app-navbar bg-white/80 backdrop-blur-md sticky top-0 z-50 px-6 py-3 flex justify-between items-center shadow-lg border-b border-gray-100">
 
       {/* Logo */}
       <div

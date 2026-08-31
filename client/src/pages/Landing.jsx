@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import '../styles/landing.css';
+import '../styles/landing-art.css';
 
 const Arrow = () => (
   <svg viewBox="0 0 20 20" aria-hidden="true" className="landing-arrow">
@@ -106,12 +107,24 @@ export default function Landing() {
         <div className="landing-feature-grid">{features.map((feature) => <article className={`landing-feature-card landing-feature-card--${feature.accent}`} key={feature.number}><span className="landing-feature-number">{feature.number}</span><div className="landing-feature-icon">{feature.number === '01' ? '◫' : feature.number === '02' ? '✓' : '↗'}</div><h3>{feature.title}</h3><p>{feature.text}</p><span className="landing-feature-line" /></article>)}</div>
       </section>
 
+      <section className="landing-kanban-story landing-section">
+        <div className="landing-story-header"><p className="landing-section-label">THE WORK, IN MOTION</p><h2>A board that makes<br /><em>progress visible.</em></h2><p>Move from a rough first thought to a finished task without losing the context, owners, or next step along the way.</p></div>
+        <div className="landing-kanban-stage" aria-label="Kanban workflow illustration"><div className="landing-stage-orbit" /><div className="landing-stage-label landing-stage-label--one">New brief</div><div className="landing-stage-label landing-stage-label--two">In review</div><div className="landing-stage-label landing-stage-label--three">Shipped <Check /></div><div className="landing-moving-task"><span className="preview-tag preview-tag--orange">High priority</span><b>Publish launch page</b><small><span className="preview-avatar preview-avatar--small preview-avatar--blue">K</span> Today</small></div></div>
+      </section>
+
+      <section className="landing-collaboration landing-section">
+        <div className="landing-collab-visual"><div className="landing-collab-card landing-collab-card--comment"><span className="preview-avatar preview-avatar--peach">M</span><p><b>Maya left a comment</b><br />“The new task flow looks ready.”</p></div><div className="landing-collab-card landing-collab-card--assignment"><span className="landing-done-icon"><Check /></span><p><b>Task assigned</b><br />Jordan is on the next step.</p></div><div className="landing-collab-pulse"><span /><span /><span /></div></div>
+        <div className="landing-collab-copy"><p className="landing-section-label">STAY IN THE LOOP</p><h2>Collaboration that<br />keeps the work human.</h2><p>Assign the right person, leave useful context, and use real-time updates to keep a project moving—without adding another meeting.</p><div className="landing-collab-points"><span><Check /> Comments stay with the task</span><span><Check /> Assignments are always clear</span><span><Check /> Project updates appear in real time</span></div></div>
+      </section>
+
       <section id="how-it-works" className="landing-steps landing-section">
         <div className="landing-steps-copy"><p className="landing-section-label">HOW IT WORKS</p><h2>Less overhead.<br /><em>More of the work.</em></h2><p>ProjectHub is intentionally simple to adopt, so your team can settle into a better rhythm from day one.</p><Link to="/register" className="landing-text-link">Start your workspace <Arrow /></Link></div>
         <ol className="landing-step-list"><li><span>01</span><div><h3>Create a project</h3><p>Give your work a clear home with the right context.</p></div></li><li><span>02</span><div><h3>Organize the next steps</h3><p>Turn big goals into visible, owned tasks.</p></div></li><li><span>03</span><div><h3>Collaborate and deliver</h3><p>Keep updates, decisions, and progress together.</p></div></li></ol>
       </section>
 
       <section className="landing-metrics"><div><strong>One shared view</strong><span>of the work that matters</span></div><div><strong>Three simple stages</strong><span>from to-do to done</span></div><div><strong>Built for teams</strong><span>that value clarity</span></div></section>
+
+      <section className="landing-tech landing-section"><p className="landing-section-label">DESIGNED AND BUILT WITH CARE</p><div><h2>A modern project,<br />from interface to infrastructure.</h2><p>ProjectHub is a full-stack MERN application with a responsive React client, Express API, MongoDB data model, JWT authentication, and Socket.io collaboration events.</p></div><ul><li>React</li><li>Vite</li><li>Tailwind</li><li>Node.js</li><li>Express</li><li>MongoDB</li><li>Socket.io</li><li>JWT</li></ul></section>
 
       <section className="landing-final-cta"><div className="landing-final-glow" /><p className="landing-section-label">READY WHEN YOU ARE</p><h2>Bring your projects<br />together.</h2><p>Start organizing the work your team is ready to ship.</p><Link to="/register" className="landing-primary-button landing-primary-button--light">Get started free <Arrow /></Link></section>
 
