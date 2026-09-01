@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { useAuth } from '../context/useAuth.js';
 import ProjectHubBrand from '../components/ProjectHubBrand';
 import dashboardDemo from '../assets/projecthub-dashboard-demo.png';
 import commentsDemo from '../assets/projecthub-comments-demo.png';
@@ -32,9 +33,13 @@ const features = [
 ];
 
 export default function Landing() {
+  const { user, token } = useAuth();
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [pointer, setPointer] = useState({ x: 0, y: 0 });
+  const isAuthenticated = Boolean(user && token);
+  const primaryDestination = isAuthenticated ? '/dashboard' : '/register';
+  const primaryLabel = isAuthenticated ? 'Get back to work' : 'Get started free';
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 12);
@@ -56,8 +61,14 @@ export default function Landing() {
           <a href="#product" onClick={() => setMenuOpen(false)}>Product</a>
           <a href="#features" onClick={() => setMenuOpen(false)}>Features</a>
           <a href="#how-it-works" onClick={() => setMenuOpen(false)}>How it works</a>
-          <Link to="/login" onClick={() => setMenuOpen(false)}>Login</Link>
-          <Link to="/register" className="landing-nav-cta" onClick={() => setMenuOpen(false)}>Get started <Arrow /></Link>
+          {isAuthenticated ? (
+            <Link to="/dashboard" className="landing-nav-cta" onClick={() => setMenuOpen(false)}>Get back to work <Arrow /></Link>
+          ) : (
+            <>
+              <Link to="/login" onClick={() => setMenuOpen(false)}>Login</Link>
+              <Link to="/register" className="landing-nav-cta" onClick={() => setMenuOpen(false)}>Get started <Arrow /></Link>
+            </>
+          )}
         </nav>
       </header>
 
@@ -68,7 +79,7 @@ export default function Landing() {
           <ProjectHubBrand hero />
           <h1>Plan together.<br /><em>Ship with clarity.</em></h1>
           <p className="landing-lede">ProjectHub gives your team one calm, connected place to turn ambitious ideas into finished work.</p>
-          <div className="landing-hero-actions"><Link to="/register" className="landing-primary-button">Get started free <Arrow /></Link><a href="#product" className="landing-secondary-button">Explore ProjectHub <span>↓</span></a></div>
+          <div className="landing-hero-actions"><Link to={primaryDestination} className="landing-primary-button">{primaryLabel} <Arrow /></Link><a href="#product" className="landing-secondary-button">Explore ProjectHub <span>↓</span></a></div>
           <div className="landing-proof"><div className="landing-proof-avatars"><span>J</span><span>M</span><span>A</span><span>R</span></div><p>Designed for teams that want less status-chasing and more progress.</p></div>
         </div>
         <div className="landing-hero-visual" style={{ '--tilt-x': `${pointer.x * 3}deg`, '--tilt-y': `${pointer.y * -3}deg` }}>
@@ -102,7 +113,7 @@ export default function Landing() {
       </section>
 
       <section id="how-it-works" className="landing-steps landing-section">
-        <div className="landing-steps-copy"><p className="landing-section-label">HOW IT WORKS</p><h2>Less overhead.<br /><em>More of the work.</em></h2><p>ProjectHub is intentionally simple to adopt, so your team can settle into a better rhythm from day one.</p><Link to="/register" className="landing-text-link">Start your workspace <Arrow /></Link></div>
+        <div className="landing-steps-copy"><p className="landing-section-label">HOW IT WORKS</p><h2>Less overhead.<br /><em>More of the work.</em></h2><p>ProjectHub is intentionally simple to adopt, so your team can settle into a better rhythm from day one.</p><Link to={primaryDestination} className="landing-text-link">{isAuthenticated ? 'Get back to work' : 'Start your workspace'} <Arrow /></Link></div>
         <ol className="landing-step-list"><li><span>01</span><div><h3>Create a project</h3><p>Give your work a clear home with the right context.</p></div></li><li><span>02</span><div><h3>Organize the next steps</h3><p>Turn big goals into visible, owned tasks.</p></div></li><li><span>03</span><div><h3>Collaborate and deliver</h3><p>Keep updates, decisions, and progress together.</p></div></li></ol>
       </section>
 
@@ -110,9 +121,9 @@ export default function Landing() {
 
       <section className="landing-tech landing-section"><p className="landing-section-label">DESIGNED AND BUILT WITH CARE</p><div><h2>A modern project,<br />from interface to infrastructure.</h2><p>ProjectHub is a full-stack MERN application with a responsive React client, Express API, MongoDB data model, JWT authentication, and Socket.io collaboration events.</p></div><ul><li>React</li><li>Vite</li><li>Tailwind</li><li>Node.js</li><li>Express</li><li>MongoDB</li><li>Socket.io</li><li>JWT</li></ul></section>
 
-      <section className="landing-final-cta"><div className="landing-final-glow" /><p className="landing-section-label">READY WHEN YOU ARE</p><h2>Bring your projects<br />together.</h2><p>Start organizing the work your team is ready to ship.</p><Link to="/register" className="landing-primary-button landing-primary-button--light">Get started free <Arrow /></Link></section>
+      <section className="landing-final-cta"><div className="landing-final-glow" /><p className="landing-section-label">READY WHEN YOU ARE</p><h2>Bring your projects<br />together.</h2><p>Start organizing the work your team is ready to ship.</p><Link to={primaryDestination} className="landing-primary-button landing-primary-button--light">{primaryLabel} <Arrow /></Link></section>
 
-      <footer className="landing-footer"><ProjectHubBrand className="landing-logo" /><div className="landing-footer-links"><a href="#product">Product</a><a href="#features">Features</a><Link to="/login">Login</Link><Link to="/register">Register</Link></div><p>© {new Date().getFullYear()} ProjectHub. Built for better teamwork.</p></footer>
+      <footer className="landing-footer"><ProjectHubBrand className="landing-logo" /><div className="landing-footer-links"><a href="#product">Product</a><a href="#features">Features</a>{isAuthenticated ? <Link to="/dashboard">Get back to work</Link> : <><Link to="/login">Login</Link><Link to="/register">Register</Link></>}</div><p>© {new Date().getFullYear()} ProjectHub. Built for better teamwork.</p></footer>
     </main>
   );
 }
