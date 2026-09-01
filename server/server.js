@@ -56,7 +56,16 @@ io.on('connection', (socket) => {
 
   socket.on('authenticate', ({ token }) => {
     const userId = getSocketUserId(token);
-    if (userId) socket.join(`user:${userId}`);
+    if (!userId) return;
+
+    if (socket.data.userRoom) socket.leave(socket.data.userRoom);
+    socket.data.userRoom = `user:${userId}`;
+    socket.join(socket.data.userRoom);
+  });
+
+  socket.on('deauthenticate', () => {
+    if (socket.data.userRoom) socket.leave(socket.data.userRoom);
+    socket.data.userRoom = null;
   });
 
   socket.on('taskUpdated', (data) => {

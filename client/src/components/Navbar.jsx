@@ -33,14 +33,16 @@ export default function Navbar({ projectId }) {
       return undefined;
     }
 
+    let isCurrentSession = true;
+
     const loadNotifications = async () => {
       try {
         const response = await axios.get('http://localhost:5000/api/notifications', {
           headers: { Authorization: `Bearer ${token}` },
         });
-        setNotifications(response.data);
+        if (isCurrentSession) setNotifications(response.data.slice(0, 20));
       } catch {
-        console.error('Unable to load notifications');
+        if (isCurrentSession) console.error('Unable to load notifications');
       }
     };
 
@@ -49,10 +51,14 @@ export default function Navbar({ projectId }) {
     socket.on('notification', onNotification);
     loadNotifications();
 
-    return () => socket.off('notification', onNotification);
-  }, [token]);
+    return () => {
+      isCurrentSession = false;
+      socket.off('notification', onNotification);
+    };
+  }, [token, user?.id]);
 
   const handleLogout = () => {
+    socket.emit('deauthenticate');
     logout();
     navigate('/login');
   };
