@@ -1,6 +1,9 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import ProjectHubBrand, { ProjectHubMark } from '../components/ProjectHubBrand';
+import ProjectHubBrand from '../components/ProjectHubBrand';
+import dashboardDemo from '../assets/projecthub-dashboard-demo.png';
+import commentsDemo from '../assets/projecthub-comments-demo.png';
+import boardDemo from '../assets/projecthub-board-demo.png';
 import '../styles/landing.css';
 import '../styles/landing-art.css';
 
@@ -16,32 +19,10 @@ const Check = () => (
   </svg>
 );
 
-const ProductPreview = ({ compact = false }) => (
-  <div className={`product-preview ${compact ? 'product-preview--compact' : ''}`} aria-label="Project board preview">
-    <div className="preview-toolbar">
-      <div className="preview-brand"><ProjectHubMark className="preview-mark" /><span>ProjectHub</span></div>
-      <div className="preview-toolbar-actions"><span className="preview-search">Search</span><span className="preview-avatar preview-avatar--violet">A</span></div>
-    </div>
-    <div className="preview-content">
-      <aside className="preview-sidebar">
-        <span className="preview-sidebar-label">Workspace</span>
-        <span className="preview-sidebar-item preview-sidebar-item--active">Overview</span>
-        <span className="preview-sidebar-item">My tasks</span>
-        <span className="preview-sidebar-item">Projects</span>
-        <span className="preview-sidebar-label preview-sidebar-label--space">Teams</span>
-        <span className="preview-sidebar-item">Product</span>
-      </aside>
-      <section className="preview-main">
-        <div className="preview-heading"><div><span className="preview-kicker">Product design</span><h3>Website refresh</h3></div><button type="button" className="preview-add">+ Add task</button></div>
-        <div className="preview-progress"><span>Project progress</span><strong>68%</strong><div><i /></div></div>
-        <div className="preview-columns">
-          <div className="preview-column"><div className="preview-column-title"><span>To do</span><b>2</b></div><article className="preview-task"><span className="preview-tag preview-tag--purple">Design</span><strong>Landing page system</strong><small><span className="preview-avatar preview-avatar--small preview-avatar--peach">M</span> Due Tue</small></article><article className="preview-task preview-task--muted"><strong>Review content brief</strong><small>Due Wed</small></article></div>
-          <div className="preview-column"><div className="preview-column-title"><span>In progress</span><b>3</b></div><article className="preview-task"><span className="preview-tag preview-tag--orange">Priority</span><strong>Build component library</strong><small><span className="preview-avatars"><span className="preview-avatar preview-avatar--small preview-avatar--blue">K</span><span className="preview-avatar preview-avatar--small preview-avatar--green">J</span></span> 2 collaborators</small></article><article className="preview-task preview-task--muted"><strong>Map launch flow</strong><small>Due Fri</small></article></div>
-          <div className="preview-column preview-column--done"><div className="preview-column-title"><span>Done</span><b>4</b></div><article className="preview-task"><span className="preview-tag preview-tag--green">Complete</span><strong>Research user needs</strong><small>Completed today</small></article></div>
-        </div>
-      </section>
-    </div>
-  </div>
+const ProductPreview = ({ compact = false, source, alt }) => (
+  <figure className={`product-preview product-preview--screenshot ${compact ? 'product-preview--compact' : ''}`}>
+    <img src={source} alt={alt} />
+  </figure>
 );
 
 const features = [
@@ -93,7 +74,7 @@ export default function Landing() {
         <div className="landing-hero-visual" style={{ '--tilt-x': `${pointer.x * 3}deg`, '--tilt-y': `${pointer.y * -3}deg` }}>
           <div className="landing-float-card landing-float-card--progress"><span>Weekly progress</span><strong>+24%</strong><svg viewBox="0 0 120 36" aria-hidden="true"><path d="M1 31C20 31 19 25 34 25s11-12 28-12 14 12 28 7 17-16 29-16" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" /></svg></div>
           <div className="landing-float-card landing-float-card--team"><div className="landing-mini-avatars"><span>A</span><span>J</span><span>K</span></div><p><b>3 teammates</b><br />in sync today</p></div>
-          <ProductPreview />
+          <ProductPreview source={dashboardDemo} alt="ProjectHub dashboard showing a team's projects" />
           <div className="landing-float-card landing-float-card--done"><span className="landing-done-icon"><Check /></span><p><b>Launch checklist</b><br />7 tasks completed</p></div>
         </div>
       </section>
@@ -101,21 +82,22 @@ export default function Landing() {
       <section id="product" className="landing-intro landing-section">
         <p className="landing-section-label">ONE PLACE, REAL MOMENTUM</p>
         <div className="landing-section-heading"><h2>Everything your team needs to make meaningful progress.</h2><p>ProjectHub keeps the important work visible, the next step obvious, and your team connected without adding noise.</p></div>
-        <div className="landing-intro-preview"><ProductPreview compact /><div className="landing-preview-note"><span className="landing-note-dot" /><p><b>Built around real work.</b> Projects, tasks, people, and progress are designed to live together.</p></div></div>
+        <div className="landing-intro-preview"><ProductPreview compact source={dashboardDemo} alt="ProjectHub project dashboard" /><div className="landing-preview-note"><span className="landing-note-dot" /><p><b>Built around real work.</b> Projects, tasks, people, and progress are designed to live together.</p></div></div>
       </section>
 
       <section id="features" className="landing-features landing-section">
         <div className="landing-feature-header"><div><p className="landing-section-label">BUILT FOR FOCUS</p><h2>Make every project<br />feel more manageable.</h2></div><p>Thoughtful tools and a clear visual system give your team the confidence to move from plans to done.</p></div>
         <div className="landing-feature-grid">{features.map((feature) => <article className={`landing-feature-card landing-feature-card--${feature.accent}`} key={feature.number}><span className="landing-feature-number">{feature.number}</span><div className="landing-feature-icon">{feature.number === '01' ? '◫' : feature.number === '02' ? '✓' : '↗'}</div><h3>{feature.title}</h3><p>{feature.text}</p><span className="landing-feature-line" /></article>)}</div>
+        <ProductPreview compact source={dashboardDemo} alt="ProjectHub dashboard with project cards and team members" />
       </section>
 
       <section className="landing-kanban-story landing-section">
         <div className="landing-story-header"><p className="landing-section-label">THE WORK, IN MOTION</p><h2>A board that makes<br /><em>progress visible.</em></h2><p>Move from a rough first thought to a finished task without losing the context, owners, or next step along the way.</p></div>
-        <div className="landing-kanban-stage" aria-label="Kanban workflow illustration"><div className="landing-stage-orbit" /><div className="landing-stage-label landing-stage-label--one">New brief</div><div className="landing-stage-label landing-stage-label--two">In review</div><div className="landing-stage-label landing-stage-label--three">Shipped <Check /></div><div className="landing-moving-task"><span className="preview-tag preview-tag--orange">High priority</span><b>Publish launch page</b><small><span className="preview-avatar preview-avatar--small preview-avatar--blue">K</span> Today</small></div></div>
+        <div className="landing-kanban-stage" aria-label="ProjectHub Kanban board"><ProductPreview source={boardDemo} alt="ProjectHub Kanban board with To do, In progress, and Done columns" /><div className="landing-stage-label landing-stage-label--one">To do</div><div className="landing-stage-label landing-stage-label--two">In progress</div><div className="landing-stage-label landing-stage-label--three">Done <Check /></div></div>
       </section>
 
       <section className="landing-collaboration landing-section">
-        <div className="landing-collab-visual"><div className="landing-collab-card landing-collab-card--comment"><span className="preview-avatar preview-avatar--peach">M</span><p><b>Maya left a comment</b><br />“The new task flow looks ready.”</p></div><div className="landing-collab-card landing-collab-card--assignment"><span className="landing-done-icon"><Check /></span><p><b>Task assigned</b><br />Jordan is on the next step.</p></div><div className="landing-collab-pulse"><span /><span /><span /></div></div>
+        <div className="landing-collab-visual"><ProductPreview source={commentsDemo} alt="ProjectHub task comments showing real-time collaboration" /><div className="landing-collab-card landing-collab-card--comment"><span className="preview-avatar preview-avatar--peach">M</span><p><b>Comments stay with the work</b><br />Keep decisions clear for the whole team.</p></div><div className="landing-collab-card landing-collab-card--assignment"><span className="landing-done-icon"><Check /></span><p><b>Task assigned</b><br />The next step is always clear.</p></div></div>
         <div className="landing-collab-copy"><p className="landing-section-label">STAY IN THE LOOP</p><h2>Collaboration that<br />keeps the work human.</h2><p>Assign the right person, leave useful context, and use real-time updates to keep a project moving—without adding another meeting.</p><div className="landing-collab-points"><span><Check /> Comments stay with the task</span><span><Check /> Assignments are always clear</span><span><Check /> Project updates appear in real time</span></div></div>
       </section>
 
