@@ -68,6 +68,7 @@ export default function Board() {
     fetchTasks();
     fetchProject();
     socket.emit('joinProject', projectId);
+    socket.emit('authenticate', { token });
     socket.on('refreshTasks', () => fetchTasks());
     socket.on('notification', (data) => addNotification(data.message));
     return () => { socket.off('refreshTasks'); socket.off('notification'); };
@@ -85,8 +86,11 @@ export default function Board() {
       setShowTaskModal(false);
       fetchTasks();
       socket.emit('taskUpdated', { projectId });
-      socket.emit('newTask', { projectId, taskTitle: form.title });
-      if (form.assignedTo) socket.emit('taskAssigned', { projectId, taskTitle: form.title, assignedTo: form.assignedTo });
+      if (form.assignedTo) {
+        socket.emit('taskAssigned', { projectId, taskTitle: form.title, assignedTo: form.assignedTo, token });
+      } else {
+        socket.emit('newTask', { projectId, taskTitle: form.title, token });
+      }
     } catch (err) {
       setError(err.response?.data?.msg || 'Failed to create task');
     }
@@ -146,7 +150,7 @@ export default function Board() {
       await axios.put(`http://localhost:5000/api/tasks/${draggableId}`, { status: destination.droppableId }, { headers: { Authorization: `Bearer ${token}` } });
       fetchTasks();
       socket.emit('taskUpdated', { projectId });
-      if (destination.droppableId === 'Done') socket.emit('newTask', { projectId, taskTitle: `Task moved to Done ✅` });
+      if (destination.droppableId === 'Done') socket.emit('newTask', { projectId, taskTitle: 'Task moved to Done ✅', token });
     } catch (err) { console.log(err); }
   };
 

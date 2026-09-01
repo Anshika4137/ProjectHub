@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import axios from 'axios';
 import { useAuth } from '../context/useAuth.js';
 import { useNavigate, Link } from 'react-router-dom';
 import { io } from 'socket.io-client';
@@ -6,32 +7,66 @@ import ProjectHubBrand from './ProjectHubBrand';
 
 const socket = io('http://localhost:5000');
 
+const formatTimestamp = (createdAt) => new Date(createdAt).toLocaleString([], {
+  dateStyle: 'medium',
+  timeStyle: 'short',
+});
+
 export default function Navbar({ projectId }) {
-  const { user, logout } = useAuth();
+  const { user, token, logout } = useAuth();
   const navigate = useNavigate();
   const [notifications, setNotifications] = useState([]);
   const [showNotif, setShowNotif] = useState(false);
+
+  const addNotification = (notification) => {
+    setNotifications((previous) => [notification, ...previous.filter((item) => item._id !== notification._id)].slice(0, 20));
+  };
 
   useEffect(() => {
     if (projectId) {
       socket.emit('joinProject', projectId);
     }
-    socket.on('notification', (data) => {
-      setNotifications((prev) => [data, ...prev]);
-    });
-    return () => {
-      socket.off('notification');
-    };
   }, [projectId]);
+
+  useEffect(() => {
+    if (!token) {
+      return undefined;
+    }
+
+    const loadNotifications = async () => {
+      try {
+        const response = await axios.get('http://localhost:5000/api/notifications', {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        setNotifications(response.data);
+      } catch {
+        console.error('Unable to load notifications');
+      }
+    };
+
+    const onNotification = (notification) => addNotification(notification);
+    socket.emit('authenticate', { token });
+    socket.on('notification', onNotification);
+    loadNotifications();
+
+    return () => socket.off('notification', onNotification);
+  }, [token]);
 
   const handleLogout = () => {
     logout();
     navigate('/login');
   };
 
-  const clearNotifications = () => {
-    setNotifications([]);
-    setShowNotif(false);
+  const clearNotifications = async () => {
+    try {
+      await axios.delete('http://localhost:5000/api/notifications', {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setNotifications([]);
+      setShowNotif(false);
+    } catch {
+      console.error('Unable to clear notifications');
+    }
   };
 
   return (
@@ -91,15 +126,15 @@ export default function Navbar({ projectId }) {
                           <p className="text-gray-400 text-xs mt-1">You're all caught up!</p>
                         </div>
                       ) : (
-                        notifications.map((notif, i) => (
-                          <div key={i} className="p-4 border-b border-gray-100 hover:bg-indigo-50 transition-all duration-200 cursor-pointer">
+                        notifications.map((notif) => (
+                          <div key={notif._id} className="p-4 border-b border-gray-100 hover:bg-indigo-50 transition-all duration-200 cursor-pointer">
                             <div className="flex items-start gap-3">
                               <div className="w-8 h-8 bg-gradient-to-br from-indigo-100 to-purple-100 rounded-lg flex items-center justify-center">
                                 <span className="text-lg">🔔</span>
                               </div>
                               <div>
                                 <p className="text-gray-800 text-sm font-medium">{notif.message}</p>
-                                <p className="text-gray-400 text-xs mt-1">Just now</p>
+                                <p className="text-gray-400 text-xs mt-1">{formatTimestamp(notif.createdAt)}</p>
                               </div>
                             </div>
                           </div>
