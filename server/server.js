@@ -5,7 +5,7 @@ const http = require('http');
 const { Server } = require('socket.io');
 const jwt = require('jsonwebtoken');
 const Project = require('./models/Project');
-const Notification = require('./models/Notification');
+const { configureNotifications, createNotification } = require('./services/notifications');
 require('dotenv').config();
 
 const app = express();
@@ -16,27 +16,13 @@ const io = new Server(server, {
 
 app.use(cors());
 app.use(express.json());
+configureNotifications(io);
 
 // Routes
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/projects', require('./routes/projects'));
 app.use('/api/tasks', require('./routes/tasks'));
 app.use('/api/notifications', require('./routes/notifications'));
-
-const createNotification = async ({ recipient, sender, type, message, project, task }) => {
-  const notification = await Notification.create({ recipient, sender, type, message, project, task });
-  const overflow = await Notification.find({ recipient })
-    .sort({ createdAt: -1 })
-    .skip(20)
-    .select('_id')
-    .lean();
-
-  if (overflow.length) {
-    await Notification.deleteMany({ _id: { $in: overflow.map((item) => item._id) } });
-  }
-
-  io.to(`user:${recipient}`).emit('notification', notification.toObject());
-};
 
 const getSocketUserId = (token) => {
   try {
@@ -80,7 +66,6 @@ io.on('connection', (socket) => {
 
       await Promise.all(project.members
         .map((member) => member.toString())
-        .filter((recipient) => recipient !== sender)
         .map((recipient) => createNotification({
           recipient,
           sender,
@@ -97,17 +82,34 @@ io.on('connection', (socket) => {
   socket.on('taskAssigned', async (data) => {
     try {
       const sender = getSocketUserId(data.token);
-      const project = await Project.findById(data.projectId).select('members');
+      const project = await Project.findById(data.projectId).select('members owner');
       const recipient = data.assignedTo?.toString();
-      if (!sender || !recipient || !project || !project.members.some((member) => member.toString() === sender) || !project.members.some((member) => member.toString() === recipient) || sender === recipient) return;
+      if (!sender || !recipient || !project || !project.members.some((member) => member.toString() === sender) || !project.members.some((member) => member.toString() === recipient)) return;
 
-      await createNotification({
-        recipient,
-        sender,
-        type: 'task-assigned',
-        message: `Task "${data.taskTitle}" has been assigned to you 🎯`,
-        project: project._id,
-      });
+      const notifications = [];
+
+      if (recipient !== sender) {
+        notifications.push(createNotification({
+          recipient,
+          sender,
+          type: 'task-assigned',
+          message: `Task "${data.taskTitle}" has been assigned to you 🎯`,
+          project: project._id,
+        }));
+      }
+
+      const ownerId = project.owner?.toString();
+      if (ownerId && ownerId !== recipient) {
+        notifications.push(createNotification({
+          recipient: ownerId,
+          sender,
+          type: 'task-assigned',
+          message: `Task "${data.taskTitle}" was assigned to a project member`,
+          project: project._id,
+        }));
+      }
+
+      await Promise.all(notifications);
     } catch (err) {
       console.error('Unable to create assignment notification');
     }

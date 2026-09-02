@@ -13,13 +13,13 @@ export default function CommentSection({ task, onUpdate }) {
   const handleAddComment = async () => {
     if (!comment.trim()) return;
     try {
-      await axios.post(
+      const response = await axios.post(
         `http://localhost:5000/api/tasks/${task._id}/comment`,
         { text: comment },
         { headers: { Authorization: `Bearer ${token}` } }
       );
       setComment('');
-      onUpdate();
+      onUpdate(response.data);
     } catch (err) {
       console.log(err);
     }
@@ -29,14 +29,14 @@ export default function CommentSection({ task, onUpdate }) {
   const handleEditComment = async (commentId) => {
     if (!editText.trim()) return;
     try {
-      await axios.put(
+      const response = await axios.put(
         `http://localhost:5000/api/tasks/${task._id}/comment/${commentId}`,
         { text: editText },
         { headers: { Authorization: `Bearer ${token}` } }
       );
       setEditingId(null);
       setEditText('');
-      onUpdate();
+      onUpdate(response.data);
     } catch (err) {
       console.log(err);
     }
@@ -45,11 +45,11 @@ export default function CommentSection({ task, onUpdate }) {
   // ── NEW: delete comment ──
   const handleDeleteComment = async (commentId) => {
     try {
-      await axios.delete(
+      const response = await axios.delete(
         `http://localhost:5000/api/tasks/${task._id}/comment/${commentId}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
-      onUpdate();
+      onUpdate(response.data);
     } catch (err) {
       console.log(err);
     }

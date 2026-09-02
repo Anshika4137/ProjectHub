@@ -3,6 +3,8 @@ const router = express.Router();
 const auth = require('../middleware/auth');
 const Task = require('../models/Task');
 const Project = require('../models/Project');
+const User = require('../models/User');
+const { createNotification } = require('../services/notifications');
 
 // Create Task - Only Owner can create
 router.post('/', auth, async (req, res) => {
@@ -82,6 +84,29 @@ router.post('/:id/comment', auth, async (req, res) => {
     task.comments.push({ user: req.user.id, text: req.body.text });
     await task.save();
     const updated = await Task.findById(task._id).populate('comments.user', 'name');
+
+    try {
+      const [project, author] = await Promise.all([
+        Project.findById(task.project).select('owner'),
+        User.findById(req.user.id).select('name'),
+      ]);
+      const recipients = [...new Set([
+        task.assignedTo?.toString(),
+        project?.owner?.toString(),
+      ].filter((recipient) => recipient && recipient !== req.user.id))];
+
+      await Promise.all(recipients.map((recipient) => createNotification({
+        recipient,
+        sender: req.user.id,
+        type: 'comment-added',
+        message: `${author?.name || 'A teammate'} commented on "${task.title}"`,
+        project: task.project,
+        task: task._id,
+      })));
+    } catch (notificationError) {
+      console.error('Unable to create comment notification');
+    }
+
     res.json(updated);
   } catch (err) {
     res.status(500).json({ msg: 'Server error' });

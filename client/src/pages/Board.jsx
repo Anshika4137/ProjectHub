@@ -67,11 +67,21 @@ export default function Board() {
   useEffect(() => {
     fetchTasks();
     fetchProject();
-    socket.emit('joinProject', projectId);
-    socket.emit('authenticate', { token });
-    socket.on('refreshTasks', () => fetchTasks());
-    socket.on('notification', (data) => addNotification(data.message));
-    return () => { socket.off('refreshTasks'); socket.off('notification'); };
+    const synchronizeSocket = () => {
+      socket.emit('joinProject', projectId);
+      socket.emit('authenticate', { token });
+    };
+    const refreshTasks = () => fetchTasks();
+    const showNotification = (data) => addNotification(data.message);
+    socket.on('connect', synchronizeSocket);
+    synchronizeSocket();
+    socket.on('refreshTasks', refreshTasks);
+    socket.on('notification', showNotification);
+    return () => {
+      socket.off('connect', synchronizeSocket);
+      socket.off('refreshTasks', refreshTasks);
+      socket.off('notification', showNotification);
+    };
   // The listeners must be recreated only when the active board changes.
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [projectId]);
@@ -163,6 +173,14 @@ export default function Board() {
       await fetchTasks();
       setSelectedTask(prev => ({ ...prev, assignedTo: project.members.find(m => m._id === newAssigneeId) || null }));
       socket.emit('taskUpdated', { projectId });
+      if (newAssigneeId) {
+        socket.emit('taskAssigned', {
+          projectId,
+          taskTitle: selectedTask.title,
+          assignedTo: newAssigneeId,
+          token,
+        });
+      }
       setTimeout(() => setReassignMsg(''), 3000);
     } catch {
       setReassignMsg('❌ Failed to reassign');
@@ -520,10 +538,9 @@ export default function Board() {
 
               <CommentSection
                 task={selectedTask}
-                onUpdate={() => {
-                  fetchTasks();
-                  const updated = tasks.find(t => t._id === selectedTask._id);
-                  if (updated) setSelectedTask(updated);
+                onUpdate={(updatedTask) => {
+                  setTasks((previous) => previous.map((task) => task._id === updatedTask._id ? updatedTask : task));
+                  setSelectedTask(updatedTask);
                 }}
               />
             </div>

@@ -47,12 +47,15 @@ export default function Navbar({ projectId }) {
     };
 
     const onNotification = (notification) => addNotification(notification);
-    socket.emit('authenticate', { token });
+    const authenticateSocket = () => socket.emit('authenticate', { token });
+    socket.on('connect', authenticateSocket);
+    authenticateSocket();
     socket.on('notification', onNotification);
     loadNotifications();
 
     return () => {
       isCurrentSession = false;
+      socket.off('connect', authenticateSocket);
       socket.off('notification', onNotification);
     };
   }, [token, user?.id]);
