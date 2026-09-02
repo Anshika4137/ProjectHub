@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { motion as Motion, useReducedMotion, useScroll, useTransform } from 'framer-motion';
+import { motion as Motion, useAnimation, useReducedMotion, useScroll, useTransform } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/useAuth.js';
 import ProjectHubBrand from '../components/ProjectHubBrand';
@@ -43,6 +43,18 @@ const progressWords = [
 const boardWords = ['A board', 'that makes', 'progress visible.'];
 const technologies = ['React', 'Vite', 'Tailwind', 'Node.js', 'Express', 'MongoDB', 'Socket.io', 'JWT'];
 
+const wordContainer = { hidden: {}, visible: { transition: { staggerChildren: 0.14 } } };
+const wordVariants = (index) => ({
+  hidden: { opacity: 0, y: index % 2 ? 24 : 32, x: index === 1 ? -14 : index === 2 ? 12 : 0, scale: 0.94, filter: 'blur(8px)' },
+  visible: { opacity: 1, y: 0, x: 0, scale: 1, filter: 'blur(0px)', transition: { duration: 0.66, ease: [0.22, 1, 0.36, 1] } },
+});
+
+function ReplayWords({ words, className = '', accentFrom = -1, reduceMotion }) {
+  const controls = useAnimation();
+  const variants = reduceMotion ? { hidden: { opacity: 1 }, visible: { opacity: 1 } } : wordContainer;
+  return <Motion.span className={`landing-replay-words ${className}`} variants={variants} initial="hidden" animate={controls} onViewportEnter={() => controls.start('visible')} onViewportLeave={() => controls.set('hidden')} viewport={{ amount: 0.45 }}>{words.map((word, index) => <Motion.span className={index >= accentFrom ? 'landing-replay-word landing-replay-word--accent' : 'landing-replay-word'} variants={reduceMotion ? undefined : wordVariants(index)} key={`${word}-${index}`}>{word}</Motion.span>)}</Motion.span>;
+}
+
 function FloatingFeatureCard({ feature, index, progress, reduceMotion }) {
   const y = useTransform(progress, [0, 0.5, 1], [26 - index * 10, 0, -22 + index * 10]);
   const x = useTransform(progress, [0, 1], [index === 1 ? 0 : index === 0 ? -10 : 10, index === 1 ? 0 : index === 0 ? 9 : -9]);
@@ -51,12 +63,28 @@ function FloatingFeatureCard({ feature, index, progress, reduceMotion }) {
   return <Motion.article className={`landing-feature-card landing-feature-card--${feature.accent}`} whileHover={reduceMotion ? undefined : { y: -9, scale: 1.025, rotateX: -2, rotateY: 2, transition: { duration: 0.22, ease: 'easeOut' } }} style={reduceMotion ? undefined : { y, x, rotate }} variants={{ hidden: { opacity: 0, scale: 0.88, rotateX: 9, rotateY: -5 }, visible: { opacity: 1, scale: 1, rotateX: 0, rotateY: 0, transition: { duration: reduceMotion ? 0.01 : 0.62, ease: [0.22, 1, 0.36, 1] } } }}><span className="landing-feature-number">{feature.number}</span><div className="landing-feature-icon">{feature.number === '01' ? '◫' : feature.number === '02' ? '✓' : '↗'}</div><h3>{feature.title}</h3><p>{feature.text}</p><span className="landing-feature-line" /></Motion.article>;
 }
 
+function ReplayFeatureGrid({ progress, reduceMotion }) {
+  const controls = useAnimation();
+  return <Motion.div className="landing-feature-grid" initial="hidden" animate={controls} onViewportEnter={() => controls.start('visible')} onViewportLeave={() => controls.set('hidden')} viewport={{ amount: 0.2 }} variants={{ hidden: {}, visible: { transition: { staggerChildren: reduceMotion ? 0 : 0.13 } } }}>{features.map((feature, index) => <FloatingFeatureCard feature={feature} index={index} progress={progress} reduceMotion={reduceMotion} key={feature.number} />)}</Motion.div>;
+}
+
 function FloatingStep({ number, title, text, index, progress, reduceMotion }) {
   const y = useTransform(progress, [0, 0.5, 1], [22 - index * 8, 0, -15 + index * 8]);
   const x = useTransform(progress, [0, 1], [index === 1 ? 0 : index === 0 ? -9 : 9, index === 1 ? 0 : index === 0 ? 7 : -7]);
   const rotate = useTransform(progress, [0, 1], [index === 1 ? 0 : index === 0 ? -1 : 1, index === 1 ? 0 : index === 0 ? 1 : -1]);
 
-  return <Motion.li style={reduceMotion ? undefined : { y, x, rotate }}><span>{number}</span><div><h3>{title}</h3><p>{text}</p></div></Motion.li>;
+  return <Motion.li style={reduceMotion ? undefined : { y, x, rotate }} variants={{ hidden: { opacity: 0, scale: 0.88 }, visible: { opacity: 1, scale: [0.88, 1.035, 1], transition: { duration: reduceMotion ? 0.01 : 0.5, ease: [0.22, 1, 0.36, 1] } } }}><span>{number}</span><div><h3>{title}</h3><p>{text}</p></div></Motion.li>;
+}
+
+function ReplayChecklist({ reduceMotion }) {
+  const controls = useAnimation();
+  const points = ['Comments stay with the task', 'Assignments are always clear', 'Project updates appear in real time'];
+  return <Motion.div className="landing-collab-points" initial="hidden" animate={controls} onViewportEnter={() => controls.start('visible')} onViewportLeave={() => controls.set('hidden')} viewport={{ amount: 0.5 }} variants={{ hidden: {}, visible: { transition: { staggerChildren: reduceMotion ? 0 : 0.14 } } }}>{points.map((point) => <Motion.span key={point} variants={{ hidden: { opacity: 0, y: 16, scale: 0.86 }, visible: { opacity: 1, y: 0, scale: [0.86, 1.05, 1], transition: { duration: reduceMotion ? 0.01 : 0.5, ease: [0.22, 1, 0.36, 1] } } }}><Motion.i variants={{ hidden: { scale: 0.45 }, visible: { scale: [0.45, 1.14, 1], transition: { duration: reduceMotion ? 0.01 : 0.4 } } }}><Check /></Motion.i>{point}</Motion.span>)}</Motion.div>;
+}
+
+function ReplayStepList({ progress, reduceMotion, listRef }) {
+  const controls = useAnimation();
+  return <Motion.ol ref={listRef} className="landing-step-list" initial="hidden" animate={controls} onViewportEnter={() => controls.start('visible')} onViewportLeave={() => controls.set('hidden')} viewport={{ amount: 0.35 }} variants={{ hidden: {}, visible: { transition: { staggerChildren: reduceMotion ? 0 : 0.13 } } }}><FloatingStep number="01" title="Create a project" text="Give your work a clear home with the right context." index={0} progress={progress} reduceMotion={reduceMotion} /><FloatingStep number="02" title="Organize the next steps" text="Turn big goals into visible, owned tasks." index={1} progress={progress} reduceMotion={reduceMotion} /><FloatingStep number="03" title="Collaborate and deliver" text="Keep updates, decisions, and progress together." index={2} progress={progress} reduceMotion={reduceMotion} /></Motion.ol>;
 }
 
 export default function Landing() {
@@ -72,14 +100,6 @@ export default function Landing() {
   const reduceMotion = useReducedMotion();
   const { scrollYProgress: featureScrollProgress } = useScroll({ target: featureGridRef, offset: ['start end', 'end start'] });
   const { scrollYProgress: stepsScrollProgress } = useScroll({ target: stepsRef, offset: ['start end', 'end start'] });
-  const wordContainer = {
-    hidden: {},
-    visible: { transition: { staggerChildren: reduceMotion ? 0 : 0.14 } },
-  };
-  const wordMotion = (index) => ({
-    hidden: { opacity: 0, y: index === 1 ? 12 : 22, x: index === 2 ? -12 : index === 3 ? 10 : 0, filter: 'blur(7px)' },
-    visible: { opacity: 1, y: 0, x: 0, filter: 'blur(0px)', transition: { duration: reduceMotion ? 0.01 : 0.64, ease: [0.22, 1, 0.36, 1] } },
-  });
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 12);
@@ -124,7 +144,7 @@ export default function Landing() {
           >
             <ProjectHubBrand hero />
           </Motion.div>
-          <h1>Plan together.<br /><em>Ship with clarity.</em></h1>
+          <h1><ReplayWords words={['Plan', 'together.', 'Ship', 'with clarity.']} className="landing-hero-words" accentFrom={2} reduceMotion={reduceMotion} /></h1>
           <p className="landing-lede">ProjectHub gives your team one calm, connected place to turn ambitious ideas into finished work.</p>
           <div className="landing-hero-actions"><Link to={primaryDestination} className="landing-primary-button">{primaryLabel} <Arrow /></Link><a href="#product" className="landing-secondary-button">Explore ProjectHub <span>↓</span></a></div>
           <div className="landing-proof"><div className="landing-proof-avatars"><span>J</span><span>M</span><span>A</span><span>R</span></div><p>Designed for teams that want less status-chasing and more progress.</p></div>
@@ -139,28 +159,28 @@ export default function Landing() {
 
       <section id="product" className="landing-intro landing-section">
         <p className="landing-section-label">ONE PLACE, REAL MOMENTUM</p>
-        <div className="landing-section-heading"><Motion.h2 className="landing-progress-heading" variants={wordContainer} initial="hidden" whileInView="visible" viewport={{ amount: 0.55 }}>{progressWords.map((word, index) => <Motion.span className={`landing-progress-word ${word.className}`} variants={wordMotion(index)} key={word.text}>{word.text}</Motion.span>)}</Motion.h2><p>ProjectHub keeps the important work visible, the next step obvious, and your team connected without adding noise.</p></div>
+        <div className="landing-section-heading"><h2 className="landing-progress-heading"><ReplayWords words={progressWords.map((word) => word.text)} reduceMotion={reduceMotion} /></h2><p>ProjectHub keeps the important work visible, the next step obvious, and your team connected without adding noise.</p></div>
         <div className="landing-intro-preview"><ProductPreview compact source={dashboardDemo} alt="ProjectHub project dashboard" /><div className="landing-preview-note"><span className="landing-note-dot" /><p><b>Built around real work.</b> Projects, tasks, people, and progress are designed to live together.</p></div></div>
       </section>
 
       <section id="features" className="landing-features landing-section">
-        <div className="landing-feature-header"><div><p className="landing-section-label">BUILT FOR FOCUS</p><h2>Make every project<br />feel more manageable.</h2></div><p>Thoughtful tools and a clear visual system give your team the confidence to move from plans to done.</p></div>
-        <Motion.div ref={featureGridRef} className="landing-feature-grid" initial="hidden" whileInView="visible" viewport={{ amount: 0.2 }} variants={{ hidden: {}, visible: { transition: { staggerChildren: reduceMotion ? 0 : 0.13 } } }}>{features.map((feature, index) => <FloatingFeatureCard feature={feature} index={index} progress={featureScrollProgress} reduceMotion={reduceMotion} key={feature.number} />)}</Motion.div>
+        <div className="landing-feature-header"><div><p className="landing-section-label">BUILT FOR FOCUS</p><h2><ReplayWords words={['Make every', 'project feel', 'more manageable.']} reduceMotion={reduceMotion} /></h2></div><p>Thoughtful tools and a clear visual system give your team the confidence to move from plans to done.</p></div>
+        <div ref={featureGridRef}><ReplayFeatureGrid progress={featureScrollProgress} reduceMotion={reduceMotion} /></div>
       </section>
 
       <section className="landing-kanban-story landing-section">
-        <div className="landing-story-header"><p className="landing-section-label">THE WORK, IN MOTION</p><Motion.h2 className="landing-board-heading" variants={wordContainer} initial="hidden" whileInView="visible" viewport={{ amount: 0.55 }}>{boardWords.map((word, index) => <Motion.span variants={wordMotion(index)} key={word}>{word}</Motion.span>)}</Motion.h2><p>Move from a rough first thought to a finished task without losing the context, owners, or next step along the way.</p></div>
+        <div className="landing-story-header"><p className="landing-section-label">THE WORK, IN MOTION</p><h2 className="landing-board-heading"><ReplayWords words={boardWords} accentFrom={2} reduceMotion={reduceMotion} /></h2><p>Move from a rough first thought to a finished task without losing the context, owners, or next step along the way.</p></div>
         <div className="landing-kanban-stage" aria-label="ProjectHub Kanban board"><ProductPreview source={boardDemo} alt="ProjectHub Kanban board showing To do, In progress, and Done columns" /><div className="landing-stage-label landing-stage-label--one">To do</div><div className="landing-stage-label landing-stage-label--two">In progress</div><div className="landing-stage-label landing-stage-label--three">Done <Check /></div></div>
       </section>
 
       <section className="landing-collaboration landing-section">
         <div className="landing-collab-visual"><ProductPreview source={commentsDemo} alt="ProjectHub task comments showing real-time collaboration" /><div className="landing-collab-card landing-collab-card--comment"><span className="preview-avatar preview-avatar--peach">M</span><p><b>Comments stay with the work</b><br />Keep decisions clear for the whole team.</p></div><div className="landing-collab-card landing-collab-card--assignment"><span className="landing-done-icon"><Check /></span><p><b>Task assigned</b><br />The next step is always clear.</p></div></div>
-        <div className="landing-collab-copy"><p className="landing-section-label">STAY IN THE LOOP</p><h2>Collaboration that<br />keeps the work human.</h2><p>Assign the right person, leave useful context, and use real-time updates to keep a project moving—without adding another meeting.</p><Motion.div className="landing-collab-points" initial="hidden" whileInView="visible" viewport={{ amount: 0.5 }} variants={{ hidden: {}, visible: { transition: { staggerChildren: reduceMotion ? 0 : 0.12 } } }}>{['Comments stay with the task', 'Assignments are always clear', 'Project updates appear in real time'].map((point) => <Motion.span key={point} variants={{ hidden: { opacity: 0, y: 14, scale: 0.88 }, visible: { opacity: 1, y: 0, scale: [0.88, 1.04, 1], transition: { duration: reduceMotion ? 0.01 : 0.48, ease: [0.22, 1, 0.36, 1] } } }}><Motion.i variants={{ hidden: { scale: 0.5 }, visible: { scale: [0.5, 1.12, 1], transition: { duration: reduceMotion ? 0.01 : 0.38 } } }}><Check /></Motion.i>{point}</Motion.span>)}</Motion.div></div>
+        <div className="landing-collab-copy"><p className="landing-section-label">STAY IN THE LOOP</p><h2>Collaboration that<br />keeps the work human.</h2><p>Assign the right person, leave useful context, and use real-time updates to keep a project moving—without adding another meeting.</p><ReplayChecklist reduceMotion={reduceMotion} /></div>
       </section>
 
       <section id="how-it-works" className="landing-steps landing-section">
         <div className="landing-steps-copy"><p className="landing-section-label">HOW IT WORKS</p><h2>Less overhead.<br /><em>More of the work.</em></h2><p>ProjectHub is intentionally simple to adopt, so your team can settle into a better rhythm from day one.</p><Link to={primaryDestination} className="landing-text-link">{isAuthenticated ? 'Get back to work' : 'Start your workspace'} <Arrow /></Link></div>
-        <ol ref={stepsRef} className="landing-step-list"><FloatingStep number="01" title="Create a project" text="Give your work a clear home with the right context." index={0} progress={stepsScrollProgress} reduceMotion={reduceMotion} /><FloatingStep number="02" title="Organize the next steps" text="Turn big goals into visible, owned tasks." index={1} progress={stepsScrollProgress} reduceMotion={reduceMotion} /><FloatingStep number="03" title="Collaborate and deliver" text="Keep updates, decisions, and progress together." index={2} progress={stepsScrollProgress} reduceMotion={reduceMotion} /></ol>
+        <ReplayStepList listRef={stepsRef} progress={stepsScrollProgress} reduceMotion={reduceMotion} />
       </section>
 
       <section className="landing-metrics"><div><strong>One shared view</strong><span>of the work that matters</span></div><div><strong>Three simple stages</strong><span>from to-do to done</span></div><div><strong>Built for teams</strong><span>that value clarity</span></div></section>

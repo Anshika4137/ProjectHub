@@ -39,8 +39,7 @@
 .landing-story-header h2 em{color:#cf6659;font-style:normal}
 .landing-story-header>p:last-child{margin:0;color:var(--muted);font-size:14px;line-height:1.8}
 .landing-board-heading{display:flex;flex-wrap:wrap;gap:0 .18em}
-.landing-board-heading span{display:inline-block;will-change:transform,opacity,filter}
-.landing-board-heading span:last-child{flex-basis:100%;color:#cf6659}
+.landing-board-heading .landing-replay-word:last-child{flex-basis:100%;color:#cf6659}
 .landing-kanban-stage{position:relative;isolation:isolate;height:344px;margin-top:53px;overflow:hidden;border:1px solid #ddd5c7;border-radius:18px;background:linear-gradient(110deg,#e5ddcc 0 28%,#f8f5ed 28% 69%,#d8d2c5 69%)}
 .landing-stage-orbit{position:absolute;left:20%;top:-210px;width:530px;height:530px;border:1px dashed #d66e606b;border-radius:50%}
 .landing-stage-label{position:absolute;display:flex;align-items:center;gap:7px;padding:12px 16px;border:1px solid #dfd7ca;border-radius:8px;background:#fffdf8;color:#4b4740;box-shadow:0 12px 22px #44352114;font-family:DM Mono,monospace;font-size:10px}
@@ -116,6 +115,40 @@
   gap: 0 .22em;
 }
 
+.landing-replay-words {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 0 .22em;
+}
+
+.landing-replay-word {
+  display: inline-block;
+  will-change: transform, opacity, filter;
+}
+
+.landing-hero-words {
+  display: flex;
+  gap: 0 .18em;
+}
+
+.landing-hero-words .landing-replay-word:nth-child(2) {
+  margin-right: 100%;
+}
+
+.landing-hero-words .landing-replay-word--accent {
+  color: #cf6659;
+}
+
+.landing-progress-heading .landing-replay-words,
+.landing-board-heading .landing-replay-words {
+  display: flex;
+}
+
+.landing-progress-heading .landing-replay-word:first-child,
+.landing-progress-heading .landing-replay-word:last-child {
+  flex-basis: 100%;
+}
+
 .landing-progress-word {
   display: inline-block;
   will-change: transform, opacity, filter;
@@ -184,6 +217,7 @@
 @media(max-width:800px){.landing-hero:after{right:-220px;top:165px;width:380px;height:380px}
 .landing-hero-brand-pop .projecthub-brand--hero{margin-bottom:18px}
 .landing-progress-heading{gap:0 .16em}
+.landing-replay-words{gap:0 .16em}
 .landing-story-header{grid-template-columns:1fr;gap:14px}
 .landing-story-header .landing-section-label{padding:0}
 .landing-kanban-stage{height:290px;margin-top:32px}
