@@ -46,7 +46,7 @@ const technologies = ['React', 'Vite', 'Tailwind', 'Node.js', 'Express', 'MongoD
 const wordContainer = { hidden: {}, visible: { transition: { staggerChildren: 0.14 } } };
 const wordVariants = (index) => ({
   hidden: { opacity: 0, y: index % 2 ? 24 : 32, x: index === 1 ? -14 : index === 2 ? 12 : 0, scale: 0.94, filter: 'blur(8px)' },
-  visible: { opacity: 1, y: 0, x: 0, scale: 1, filter: 'blur(0px)', transition: { duration: 0.66, ease: [0.22, 1, 0.36, 1] } },
+  visible: { opacity: 1, y: 0, x: 0, scale: 1, filter: 'blur(0px)', transition: { duration: 0.74, ease: [0.22, 1, 0.36, 1] } },
 });
 
 function ReplayWords({ words, className = '', accentFrom = -1, reduceMotion }) {
@@ -60,7 +60,7 @@ function FloatingFeatureCard({ feature, index, progress, reduceMotion }) {
   const x = useTransform(progress, [0, 1], [index === 1 ? 0 : index === 0 ? -10 : 10, index === 1 ? 0 : index === 0 ? 9 : -9]);
   const rotate = useTransform(progress, [0, 1], [index === 1 ? 0 : index === 0 ? -1.4 : 1.4, index === 1 ? 0 : index === 0 ? 1.2 : -1.2]);
 
-  return <Motion.article className={`landing-feature-card landing-feature-card--${feature.accent}`} whileHover={reduceMotion ? undefined : { y: -9, scale: 1.025, rotateX: -2, rotateY: 2, transition: { duration: 0.22, ease: 'easeOut' } }} style={reduceMotion ? undefined : { y, x, rotate }} variants={{ hidden: { opacity: 0, scale: 0.88, rotateX: 9, rotateY: -5 }, visible: { opacity: 1, scale: 1, rotateX: 0, rotateY: 0, transition: { duration: reduceMotion ? 0.01 : 0.62, ease: [0.22, 1, 0.36, 1] } } }}><span className="landing-feature-number">{feature.number}</span><div className="landing-feature-icon">{feature.number === '01' ? '◫' : feature.number === '02' ? '✓' : '↗'}</div><h3>{feature.title}</h3><p>{feature.text}</p><span className="landing-feature-line" /></Motion.article>;
+  return <Motion.article className={`landing-feature-card landing-feature-card--${feature.accent}`} whileHover={reduceMotion ? undefined : { y: -9, scale: 1.025, rotateX: -2, rotateY: 2, transition: { duration: 0.26, ease: 'easeOut' } }} style={reduceMotion ? undefined : { y, x, rotate }} variants={{ hidden: { opacity: 0, scale: 0.88, rotateX: 9, rotateY: -5 }, visible: { opacity: 1, scale: 1, rotateX: 0, rotateY: 0, transition: { duration: reduceMotion ? 0.01 : 0.7, ease: [0.22, 1, 0.36, 1] } } }}><span className="landing-feature-number">{feature.number}</span><div className="landing-feature-icon">{feature.number === '01' ? '◫' : feature.number === '02' ? '✓' : '↗'}</div><h3>{feature.title}</h3><p>{feature.text}</p><span className="landing-feature-line" /></Motion.article>;
 }
 
 function ReplayFeatureGrid({ progress, reduceMotion }) {
@@ -73,13 +73,13 @@ function FloatingStep({ number, title, text, index, progress, reduceMotion }) {
   const x = useTransform(progress, [0, 1], [index === 1 ? 0 : index === 0 ? -9 : 9, index === 1 ? 0 : index === 0 ? 7 : -7]);
   const rotate = useTransform(progress, [0, 1], [index === 1 ? 0 : index === 0 ? -1 : 1, index === 1 ? 0 : index === 0 ? 1 : -1]);
 
-  return <Motion.li style={reduceMotion ? undefined : { y, x, rotate }} variants={{ hidden: { opacity: 0, scale: 0.88 }, visible: { opacity: 1, scale: [0.88, 1.035, 1], transition: { duration: reduceMotion ? 0.01 : 0.5, ease: [0.22, 1, 0.36, 1] } } }}><span>{number}</span><div><h3>{title}</h3><p>{text}</p></div></Motion.li>;
+  return <Motion.li style={reduceMotion ? undefined : { y, x, rotate }} variants={{ hidden: { opacity: 0, scale: 0.88 }, visible: { opacity: 1, scale: [0.88, 1.035, 1], transition: { duration: reduceMotion ? 0.01 : 0.58, ease: [0.22, 1, 0.36, 1] } } }}><span>{number}</span><div><h3>{title}</h3><p>{text}</p></div></Motion.li>;
 }
 
 function ReplayChecklist({ reduceMotion }) {
   const controls = useAnimation();
   const points = ['Comments stay with the task', 'Assignments are always clear', 'Project updates appear in real time'];
-  return <Motion.div className="landing-collab-points" initial="hidden" animate={controls} onViewportEnter={() => controls.start('visible')} onViewportLeave={() => controls.set('hidden')} viewport={{ amount: 0.5 }} variants={{ hidden: {}, visible: { transition: { staggerChildren: reduceMotion ? 0 : 0.14 } } }}>{points.map((point) => <Motion.span key={point} variants={{ hidden: { opacity: 0, y: 16, scale: 0.86 }, visible: { opacity: 1, y: 0, scale: [0.86, 1.05, 1], transition: { duration: reduceMotion ? 0.01 : 0.5, ease: [0.22, 1, 0.36, 1] } } }}><Motion.i variants={{ hidden: { scale: 0.45 }, visible: { scale: [0.45, 1.14, 1], transition: { duration: reduceMotion ? 0.01 : 0.4 } } }}><Check /></Motion.i>{point}</Motion.span>)}</Motion.div>;
+  return <Motion.div className="landing-collab-points" initial="hidden" animate={controls} onViewportEnter={() => controls.start('visible')} onViewportLeave={() => controls.set('hidden')} viewport={{ amount: 0.5 }} variants={{ hidden: {}, visible: { transition: { staggerChildren: reduceMotion ? 0 : 0.14 } } }}>{points.map((point) => <Motion.span key={point} variants={{ hidden: { opacity: 0, y: 16, scale: 0.86 }, visible: { opacity: 1, y: 0, scale: [0.86, 1.05, 1], transition: { duration: reduceMotion ? 0.01 : 0.58, ease: [0.22, 1, 0.36, 1] } } }}><Motion.i variants={{ hidden: { scale: 0.45 }, visible: { scale: [0.45, 1.14, 1], transition: { duration: reduceMotion ? 0.01 : 0.46 } } }}><Check /></Motion.i>{point}</Motion.span>)}</Motion.div>;
 }
 
 function ReplayStepList({ progress, reduceMotion, listRef }) {
@@ -140,7 +140,7 @@ export default function Landing() {
             className="landing-hero-brand-pop"
             initial={reduceMotion ? false : { opacity: 0, y: 18, scale: 0.82, filter: 'blur(10px)' }}
             animate={reduceMotion ? undefined : { opacity: 1, y: [18, -3, 0], scale: [0.82, 1.035, 1], filter: 'blur(0px)' }}
-            transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1], times: [0, 0.82, 1] }}
+            transition={{ duration: 1, ease: [0.22, 1, 0.36, 1], times: [0, 0.82, 1] }}
           >
             <ProjectHubBrand hero />
           </Motion.div>

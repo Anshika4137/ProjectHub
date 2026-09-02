@@ -80,7 +80,6 @@
 .landing-tech>.landing-tech-marquee{grid-column:1 / -1;grid-row:3;position:relative;z-index:0;overflow:hidden;width:calc(100% + 56px);margin:18px -28px 0;padding:15px 0;border-top:1px solid #ddd5c7;border-bottom:1px solid #ddd5c7;background:#eee9de}
 .landing-tech-marquee-track{display:flex;width:max-content;align-items:center;gap:32px;padding-left:32px;animation:techMarquee 58s linear infinite;will-change:transform}
 .landing-tech-marquee span{display:inline-block;color:#403c35;font-family:DM Mono,monospace;font-size:clamp(17px,2vw,28px);font-weight:500;letter-spacing:-.055em;line-height:1;opacity:.62;text-transform:uppercase;white-space:nowrap}
-.landing-tech-marquee span:after{margin-left:32px;color:#d2695b;content:"✦"}
 @keyframes techMarquee{to{transform:translateX(-50%)}}
 
 /* Real ProjectHub screens supplied for the product story. */
@@ -235,7 +234,6 @@
 .landing-tech>.landing-tech-marquee{width:calc(100% + 42px);margin:0 -21px;padding:13px 0}
 .landing-tech-marquee-track{gap:24px;padding-left:24px;animation-duration:52s}
 .landing-tech-marquee span{font-size:clamp(16px,5vw,23px)}
-.landing-tech-marquee span:after{margin-left:26px}
 }
 
 @media(prefers-reduced-motion:reduce){
