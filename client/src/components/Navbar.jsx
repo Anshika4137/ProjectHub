@@ -2,10 +2,10 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useAuth } from '../context/useAuth.js';
 import { useNavigate, Link } from 'react-router-dom';
-import { io } from 'socket.io-client';
 import ProjectHubBrand from './ProjectHubBrand';
+import { API_URL } from '../config/api.js';
+import { connectSocket, socket } from '../config/socket.js';
 
-const socket = io('http://localhost:5000');
 
 const formatTimestamp = (createdAt) => new Date(createdAt).toLocaleString([], {
   dateStyle: 'medium',
@@ -37,7 +37,7 @@ export default function Navbar({ projectId }) {
 
     const loadNotifications = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/api/notifications', {
+        const response = await axios.get(`${API_URL}/api/notifications`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         if (isCurrentSession) setNotifications(response.data.slice(0, 20));
@@ -49,7 +49,7 @@ export default function Navbar({ projectId }) {
     const onNotification = (notification) => addNotification(notification);
     const authenticateSocket = () => socket.emit('authenticate', { token });
     socket.on('connect', authenticateSocket);
-    authenticateSocket();
+    connectSocket(token);
     socket.on('notification', onNotification);
     loadNotifications();
 
@@ -68,7 +68,7 @@ export default function Navbar({ projectId }) {
 
   const clearNotifications = async () => {
     try {
-      await axios.delete('http://localhost:5000/api/notifications', {
+      await axios.delete(`${API_URL}/api/notifications`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setNotifications([]);

@@ -3,6 +3,7 @@ import axios from 'axios';
 import { Link } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import { useAuth } from '../context/useAuth.js';
+import { API_URL } from '../config/api.js';
 
 const emptyPasswordForm = { currentPassword: '', newPassword: '', confirmPassword: '' };
 
@@ -21,7 +22,7 @@ export default function Settings() {
 
     const loadAccount = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/api/auth/account', {
+        const response = await axios.get(`${API_URL}/api/auth/account`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         if (active) {
@@ -44,7 +45,7 @@ export default function Settings() {
     setSavingAccount(true);
     setAccountMessage('');
     try {
-      const response = await axios.put('http://localhost:5000/api/auth/account', account, {
+      const response = await axios.put(`${API_URL}/api/auth/account`, account, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setAccount({ email: response.data.user.email, phone: response.data.user.phone || '' });
@@ -67,7 +68,7 @@ export default function Settings() {
 
     setSavingPassword(true);
     try {
-      const response = await axios.put('http://localhost:5000/api/auth/password', passwordForm, {
+      const response = await axios.put(`${API_URL}/api/auth/password`, passwordForm, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setPasswordForm(emptyPasswordForm);

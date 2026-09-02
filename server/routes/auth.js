@@ -5,11 +5,29 @@ const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 const auth = require('../middleware/auth');
 
+const loginAttempts = new Map();
+const loginRateLimit = (req, res, next) => {
+  const key = req.ip;
+  const now = Date.now();
+  const attempt = loginAttempts.get(key) || { count: 0, startedAt: now };
+  if (now - attempt.startedAt > 15 * 60 * 1000) Object.assign(attempt, { count: 0, startedAt: now });
+  if (attempt.count >= 10) return res.status(429).json({ msg: 'Too many attempts. Please try again later.' });
+  attempt.count += 1;
+  loginAttempts.set(key, attempt);
+  next();
+};
+const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
 const toPublicUser = (user) => ({ id: user._id, name: user.name, email: user.email, phone: user.phone || '' });
 
 // Register
 router.post('/register', async (req, res) => {
-  const { name, email, password } = req.body;
+  const name = req.body.name?.trim();
+  const email = req.body.email?.trim().toLowerCase();
+  const { password } = req.body;
+  if (!name || name.length > 80 || !email || !emailPattern.test(email) || !password || password.length < 6) {
+    return res.status(400).json({ msg: 'Enter a valid name, email, and password of at least 6 characters' });
+  }
   try {
     let user = await User.findOne({ email });
     if (user) return res.status(400).json({ msg: 'User already exists' });
@@ -28,8 +46,10 @@ router.post('/register', async (req, res) => {
 });
 
 // Login
-router.post('/login', async (req, res) => {
-  const { email, password } = req.body;
+router.post('/login', loginRateLimit, async (req, res) => {
+  const email = req.body.email?.trim().toLowerCase();
+  const { password } = req.body;
+  if (!email || !password) return res.status(400).json({ msg: 'Invalid credentials' });
   try {
     const user = await User.findOne({ email });
     if (!user) return res.status(400).json({ msg: 'Invalid credentials' });
@@ -69,8 +89,6 @@ router.get('/account', auth, async (req, res) => {
 router.put('/account', auth, async (req, res) => {
   const email = req.body.email?.trim().toLowerCase();
   const phone = req.body.phone?.trim() || '';
-  const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
   if (!email || !emailPattern.test(email)) return res.status(400).json({ msg: 'Enter a valid email address' });
   if (phone.length > 30) return res.status(400).json({ msg: 'Phone number is too long' });
 

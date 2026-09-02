@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import axios from 'axios';
 import { useAuth } from '../context/useAuth.js';
+import { API_URL } from '../config/api.js';
 import { useNavigate, Link } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 
@@ -17,7 +18,7 @@ export default function Register() {
     setIsLoading(true);
     setError('');
     try {
-      const res = await axios.post('http://localhost:5000/api/auth/register', form);
+      const res = await axios.post(`${API_URL}/api/auth/register`, form);
       login(res.data.user, res.data.token);
       navigate('/dashboard');
     } catch (err) {

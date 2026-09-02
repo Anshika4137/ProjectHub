@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
+import { API_URL } from '../config/api.js';
 import { useAuth } from '../context/useAuth.js';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
@@ -21,7 +22,7 @@ export default function Dashboard() {
 
   const fetchProjects = async () => {
     try {
-      const res = await axios.get('http://localhost:5000/api/projects', {
+      const res = await axios.get(`${API_URL}/api/projects`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setProjects(res.data);
@@ -37,7 +38,7 @@ export default function Dashboard() {
   const handleCreate = async (e) => {
     e.preventDefault();
     try {
-      await axios.post('http://localhost:5000/api/projects', form, {
+      await axios.post(`${API_URL}/api/projects`, form, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setForm({ name: '', description: '' });
@@ -53,7 +54,7 @@ export default function Dashboard() {
     e.preventDefault();
     try {
       await axios.put(
-        `http://localhost:5000/api/projects/${selectedProject._id}`,
+        `${API_URL}/api/projects/${selectedProject._id}`,
         editForm,
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -69,7 +70,7 @@ export default function Dashboard() {
   const handleDeleteProject = async () => {
     try {
       await axios.delete(
-        `http://localhost:5000/api/projects/${selectedProject._id}`,
+        `${API_URL}/api/projects/${selectedProject._id}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
       setShowDeleteConfirm(false);
@@ -84,7 +85,7 @@ export default function Dashboard() {
   const handleRemoveMember = async (memberId) => {
     try {
       const res = await axios.put(
-        `http://localhost:5000/api/projects/${selectedProject._id}/removemember`,
+        `${API_URL}/api/projects/${selectedProject._id}/removemember`,
         { userId: memberId },
         { headers: { Authorization: `Bearer ${token}` } }
       );

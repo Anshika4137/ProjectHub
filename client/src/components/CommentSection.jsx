@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import axios from 'axios';
 import { useAuth } from '../context/useAuth.js';
+import { API_URL } from '../config/api.js';
 
 export default function CommentSection({ task, onUpdate }) {
   const { token, user } = useAuth();
@@ -14,7 +15,7 @@ export default function CommentSection({ task, onUpdate }) {
     if (!comment.trim()) return;
     try {
       const response = await axios.post(
-        `http://localhost:5000/api/tasks/${task._id}/comment`,
+        `${API_URL}/api/tasks/${task._id}/comment`,
         { text: comment },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -30,7 +31,7 @@ export default function CommentSection({ task, onUpdate }) {
     if (!editText.trim()) return;
     try {
       const response = await axios.put(
-        `http://localhost:5000/api/tasks/${task._id}/comment/${commentId}`,
+        `${API_URL}/api/tasks/${task._id}/comment/${commentId}`,
         { text: editText },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -46,7 +47,7 @@ export default function CommentSection({ task, onUpdate }) {
   const handleDeleteComment = async (commentId) => {
     try {
       const response = await axios.delete(
-        `http://localhost:5000/api/tasks/${task._id}/comment/${commentId}`,
+        `${API_URL}/api/tasks/${task._id}/comment/${commentId}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
       onUpdate(response.data);

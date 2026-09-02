@@ -5,9 +5,9 @@ import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
 import { useAuth } from '../context/useAuth.js';
 import Navbar from '../components/Navbar';
 import CommentSection from '../components/CommentSection';
-import { io } from 'socket.io-client';
+import { API_URL } from '../config/api.js';
+import { connectSocket, socket } from '../config/socket.js';
 
-const socket = io('http://localhost:5000');
 const COLUMNS = ['Todo', 'In Progress', 'Done'];
 
 export default function Board() {
@@ -45,7 +45,7 @@ export default function Board() {
 
   const fetchTasks = async () => {
     try {
-      const res = await axios.get(`http://localhost:5000/api/tasks/${projectId}`, {
+      const res = await axios.get(`${API_URL}/api/tasks/${projectId}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setTasks(res.data);
@@ -54,7 +54,7 @@ export default function Board() {
 
   const fetchProject = async () => {
     try {
-      const res = await axios.get('http://localhost:5000/api/projects', {
+      const res = await axios.get(`${API_URL}/api/projects`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       const found = res.data.find(p => p._id === projectId);
@@ -74,6 +74,7 @@ export default function Board() {
     const refreshTasks = () => fetchTasks();
     const showNotification = (data) => addNotification(data.message);
     socket.on('connect', synchronizeSocket);
+    connectSocket(token);
     synchronizeSocket();
     socket.on('refreshTasks', refreshTasks);
     socket.on('notification', showNotification);
@@ -89,7 +90,7 @@ export default function Board() {
   const handleCreateTask = async (e) => {
     e.preventDefault();
     try {
-      await axios.post('http://localhost:5000/api/tasks', { ...form, projectId }, {
+      await axios.post(`${API_URL}/api/tasks`, { ...form, projectId }, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setForm({ title: '', description: '', assignedTo: '', priority: 'Medium', dueDate: '' });
@@ -111,7 +112,7 @@ export default function Board() {
     e.preventDefault();
     try {
       await axios.put(
-        `http://localhost:5000/api/tasks/${selectedTask._id}`,
+        `${API_URL}/api/tasks/${selectedTask._id}`,
         editTaskForm,
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -128,7 +129,7 @@ export default function Board() {
   const handleDeleteTask = async () => {
     try {
       await axios.delete(
-        `http://localhost:5000/api/tasks/${selectedTask._id}`,
+        `${API_URL}/api/tasks/${selectedTask._id}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
       setShowDeleteTaskConfirm(false);
@@ -141,9 +142,9 @@ export default function Board() {
   const handleAddMember = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.get(`http://localhost:5000/api/auth/finduser?email=${memberEmail}`, { headers: { Authorization: `Bearer ${token}` } });
+      const res = await axios.get(`${API_URL}/api/auth/finduser?email=${memberEmail}`, { headers: { Authorization: `Bearer ${token}` } });
       const userId = res.data._id;
-      await axios.put(`http://localhost:5000/api/projects/${projectId}/addmember`, { userId }, { headers: { Authorization: `Bearer ${token}` } });
+      await axios.put(`${API_URL}/api/projects/${projectId}/addmember`, { userId }, { headers: { Authorization: `Bearer ${token}` } });
       setMemberMsg('✅ Member added successfully!');
       setMemberEmail('');
       fetchProject();
@@ -157,7 +158,7 @@ export default function Board() {
     if (!destination) return;
     if (destination.droppableId === source.droppableId) return;
     try {
-      await axios.put(`http://localhost:5000/api/tasks/${draggableId}`, { status: destination.droppableId }, { headers: { Authorization: `Bearer ${token}` } });
+      await axios.put(`${API_URL}/api/tasks/${draggableId}`, { status: destination.droppableId }, { headers: { Authorization: `Bearer ${token}` } });
       fetchTasks();
       socket.emit('taskUpdated', { projectId });
       if (destination.droppableId === 'Done') socket.emit('newTask', { projectId, taskTitle: 'Task moved to Done ✅', token });
@@ -168,7 +169,7 @@ export default function Board() {
     setReassigning(true);
     setReassignMsg('');
     try {
-      await axios.put(`http://localhost:5000/api/tasks/${selectedTask._id}`, { assignedTo: newAssigneeId }, { headers: { Authorization: `Bearer ${token}` } });
+      await axios.put(`${API_URL}/api/tasks/${selectedTask._id}`, { assignedTo: newAssigneeId }, { headers: { Authorization: `Bearer ${token}` } });
       setReassignMsg('✅ Reassigned successfully!');
       await fetchTasks();
       setSelectedTask(prev => ({ ...prev, assignedTo: project.members.find(m => m._id === newAssigneeId) || null }));
