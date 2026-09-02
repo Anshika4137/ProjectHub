@@ -168,6 +168,17 @@ export default function Navbar({ projectId }) {
               </div>
             </div>
 
+            <Link
+              to="/settings"
+              className="group flex items-center gap-2 px-3 py-2 text-gray-600 hover:text-indigo-600 hover:bg-indigo-50 transition-all duration-300 font-medium"
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317a1.65 1.65 0 013.35 0 1.65 1.65 0 002.476 1.428 1.65 1.65 0 012.37 2.37 1.65 1.65 0 001.428 2.476 1.65 1.65 0 010 3.35 1.65 1.65 0 00-1.428 2.476 1.65 1.65 0 01-2.37 2.37 1.65 1.65 0 00-2.476 1.428 1.65 1.65 0 01-3.35 0 1.65 1.65 0 00-2.476-1.428 1.65 1.65 0 01-2.37-2.37 1.65 1.65 0 00-1.428-2.476 1.65 1.65 0 010-3.35 1.65 1.65 0 001.428-2.476 1.65 1.65 0 012.37-2.37 1.65 1.65 0 002.476-1.428z" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15.25A3.25 3.25 0 1012 8.75a3.25 3.25 0 000 6.5z" />
+              </svg>
+              <span className="hidden lg:inline">Settings</span>
+            </Link>
+
             {/* Logout Button */}
             <button
               onClick={handleLogout}

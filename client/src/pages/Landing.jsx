@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { motion as Motion, useReducedMotion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/useAuth.js';
 import ProjectHubBrand from '../components/ProjectHubBrand';
@@ -32,6 +33,13 @@ const features = [
   { number: '03', title: 'Collaboration in the flow', text: 'Keep conversations attached to the work, so decisions stay visible and everyone can move with confidence.', accent: 'blue' },
 ];
 
+const progressWords = [
+  { text: 'Everything', className: 'landing-progress-word--one' },
+  { text: 'your team', className: 'landing-progress-word--two' },
+  { text: 'needs to make', className: 'landing-progress-word--three' },
+  { text: 'meaningful progress.', className: 'landing-progress-word--four' },
+];
+
 export default function Landing() {
   const { user, token } = useAuth();
   const [menuOpen, setMenuOpen] = useState(false);
@@ -40,6 +48,15 @@ export default function Landing() {
   const isAuthenticated = Boolean(user && token);
   const primaryDestination = isAuthenticated ? '/dashboard' : '/register';
   const primaryLabel = isAuthenticated ? 'Get back to work' : 'Get started free';
+  const reduceMotion = useReducedMotion();
+  const wordContainer = {
+    hidden: {},
+    visible: { transition: { staggerChildren: reduceMotion ? 0 : 0.14 } },
+  };
+  const wordMotion = (index) => ({
+    hidden: { opacity: 0, y: index === 1 ? 12 : 22, x: index === 2 ? -12 : index === 3 ? 10 : 0, filter: 'blur(7px)' },
+    visible: { opacity: 1, y: 0, x: 0, filter: 'blur(0px)', transition: { duration: reduceMotion ? 0.01 : 0.64, ease: [0.22, 1, 0.36, 1] } },
+  });
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 12);
@@ -76,7 +93,14 @@ export default function Landing() {
         <div className="landing-orb landing-orb--violet" /><div className="landing-orb landing-orb--peach" /><div className="landing-grid" />
         <div className="landing-hero-copy">
           <p className="landing-eyebrow"><span /> A more focused way to work</p>
-          <ProjectHubBrand hero />
+          <Motion.div
+            className="landing-hero-brand-pop"
+            initial={reduceMotion ? false : { opacity: 0, y: 18, scale: 0.82, filter: 'blur(10px)' }}
+            animate={reduceMotion ? undefined : { opacity: 1, y: [18, -3, 0], scale: [0.82, 1.035, 1], filter: 'blur(0px)' }}
+            transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1], times: [0, 0.82, 1] }}
+          >
+            <ProjectHubBrand hero />
+          </Motion.div>
           <h1>Plan together.<br /><em>Ship with clarity.</em></h1>
           <p className="landing-lede">ProjectHub gives your team one calm, connected place to turn ambitious ideas into finished work.</p>
           <div className="landing-hero-actions"><Link to={primaryDestination} className="landing-primary-button">{primaryLabel} <Arrow /></Link><a href="#product" className="landing-secondary-button">Explore ProjectHub <span>↓</span></a></div>
@@ -92,14 +116,13 @@ export default function Landing() {
 
       <section id="product" className="landing-intro landing-section">
         <p className="landing-section-label">ONE PLACE, REAL MOMENTUM</p>
-        <div className="landing-section-heading"><h2>Everything your team needs to make meaningful progress.</h2><p>ProjectHub keeps the important work visible, the next step obvious, and your team connected without adding noise.</p></div>
+        <div className="landing-section-heading"><Motion.h2 className="landing-progress-heading" variants={wordContainer} initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.55 }}>{progressWords.map((word, index) => <Motion.span className={`landing-progress-word ${word.className}`} variants={wordMotion(index)} key={word.text}>{word.text}</Motion.span>)}</Motion.h2><p>ProjectHub keeps the important work visible, the next step obvious, and your team connected without adding noise.</p></div>
         <div className="landing-intro-preview"><ProductPreview compact source={dashboardDemo} alt="ProjectHub project dashboard" /><div className="landing-preview-note"><span className="landing-note-dot" /><p><b>Built around real work.</b> Projects, tasks, people, and progress are designed to live together.</p></div></div>
       </section>
 
       <section id="features" className="landing-features landing-section">
         <div className="landing-feature-header"><div><p className="landing-section-label">BUILT FOR FOCUS</p><h2>Make every project<br />feel more manageable.</h2></div><p>Thoughtful tools and a clear visual system give your team the confidence to move from plans to done.</p></div>
-        <div className="landing-feature-grid">{features.map((feature) => <article className={`landing-feature-card landing-feature-card--${feature.accent}`} key={feature.number}><span className="landing-feature-number">{feature.number}</span><div className="landing-feature-icon">{feature.number === '01' ? '◫' : feature.number === '02' ? '✓' : '↗'}</div><h3>{feature.title}</h3><p>{feature.text}</p><span className="landing-feature-line" /></article>)}</div>
-        <ProductPreview compact source={dashboardDemo} alt="ProjectHub dashboard with project cards and team members" />
+        <Motion.div className="landing-feature-grid" initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.2 }} variants={{ hidden: {}, visible: { transition: { staggerChildren: reduceMotion ? 0 : 0.13 } } }}>{features.map((feature) => <Motion.article className={`landing-feature-card landing-feature-card--${feature.accent}`} key={feature.number} whileHover={reduceMotion ? undefined : { y: -9, scale: 1.025, rotateX: -2, rotateY: 2, transition: { duration: 0.22, ease: 'easeOut' } }} variants={{ hidden: { opacity: 0, y: 38, scale: 0.88, rotateX: 9, rotateY: -5 }, visible: { opacity: 1, y: 0, scale: 1, rotateX: 0, rotateY: 0, transition: { duration: reduceMotion ? 0.01 : 0.62, ease: [0.22, 1, 0.36, 1] } } }}><span className="landing-feature-number">{feature.number}</span><div className="landing-feature-icon">{feature.number === '01' ? '◫' : feature.number === '02' ? '✓' : '↗'}</div><h3>{feature.title}</h3><p>{feature.text}</p><span className="landing-feature-line" /></Motion.article>)}</Motion.div>
       </section>
 
       <section className="landing-kanban-story landing-section">

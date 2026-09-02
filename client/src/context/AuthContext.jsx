@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { AppAuthContext } from './appAuthContext.js';
 
 const isExpiredToken = (token) => {
@@ -47,8 +47,13 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem('token');
   };
 
+  const updateUser = useCallback((userData) => {
+    setSession((session) => ({ ...session, user: userData }));
+    localStorage.setItem('user', JSON.stringify(userData));
+  }, []);
+
   return (
-    <AppAuthContext.Provider value={{ user, token, login, logout }}>
+    <AppAuthContext.Provider value={{ user, token, login, logout, updateUser }}>
       {children}
     </AppAuthContext.Provider>
   );

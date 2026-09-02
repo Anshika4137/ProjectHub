@@ -98,6 +98,49 @@
   margin: 42px auto 0;
 }
 
+/* One-time entrances preserve layout; hover depth stays intentionally subtle. */
+.landing-hero-brand-pop {
+  width: fit-content;
+  transform-origin: left center;
+}
+
+.landing-hero-brand-pop .projecthub-brand--hero {
+  margin-bottom: 24px;
+}
+
+.landing-progress-heading {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 .22em;
+}
+
+.landing-progress-word {
+  display: inline-block;
+  will-change: transform, opacity, filter;
+}
+
+.landing-progress-word--one,
+.landing-progress-word--four {
+  flex-basis: 100%;
+}
+
+.landing-feature-grid {
+  perspective: 1100px;
+}
+
+.landing-feature-card {
+  transform-style: preserve-3d;
+  will-change: transform, opacity;
+}
+
+.landing-feature-card:hover {
+  box-shadow: 0 25px 46px rgba(71, 48, 29, .18), 0 5px 13px rgba(71, 48, 29, .08);
+}
+
+.landing-feature-card:hover .landing-feature-icon {
+  box-shadow: 0 10px 20px rgba(199, 92, 78, .16);
+}
+
 .landing-kanban-stage {
   display: grid;
   place-items: center;
@@ -137,6 +180,8 @@
   object-fit: contain;
 }
 @media(max-width:800px){.landing-hero:after{right:-220px;top:165px;width:380px;height:380px}
+.landing-hero-brand-pop .projecthub-brand--hero{margin-bottom:18px}
+.landing-progress-heading{gap:0 .16em}
 .landing-story-header{grid-template-columns:1fr;gap:14px}
 .landing-story-header .landing-section-label{padding:0}
 .landing-kanban-stage{height:290px;margin-top:32px}
